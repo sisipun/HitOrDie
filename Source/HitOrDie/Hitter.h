@@ -1,7 +1,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "GameFramework/Character.h"
+
 #include "Hitter.generated.h"
 
 class UCameraComponent;
@@ -13,10 +15,10 @@ class HITORDIE_API AHitter : public ACharacter
 	GENERATED_BODY()
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
-	UCameraComponent* Camera;
+	TObjectPtr<UCameraComponent> Camera;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
-	USkeletalMeshComponent* Mesh1P;
+	TObjectPtr<USkeletalMeshComponent> Mesh1P;
 
 public:
 	AHitter();

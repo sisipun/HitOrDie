@@ -9,7 +9,7 @@ AHitter::AHitter()
 	PrimaryActorTick.bCanEverTick = false;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
-	Camera->bUsePawnControlRotation;
+	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetCapsuleComponent());
 
 	Mesh1P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh1P"));
