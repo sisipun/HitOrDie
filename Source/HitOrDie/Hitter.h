@@ -7,7 +7,7 @@
 #include "Hitter.generated.h"
 
 class UCameraComponent;
-class SkeletalMeshComponent;
+class USkeletalMeshComponent;
 
 UCLASS()
 class HITORDIE_API AHitter : public ACharacter

@@ -3,7 +3,6 @@
 #include "CoreMinimal.h"
 
 #include "GameFramework/PlayerController.h"
-#include "UObject/ObjectPtr.h"
 
 #include "HitterController.generated.h"
 
