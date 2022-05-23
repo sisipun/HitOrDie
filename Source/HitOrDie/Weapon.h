@@ -14,6 +14,7 @@ class HITORDIE_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USphereComponent> Collider;
 

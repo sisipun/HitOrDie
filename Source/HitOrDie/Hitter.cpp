@@ -4,6 +4,8 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
+#include "Weapon.h"
+
 AHitter::AHitter()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -22,10 +24,24 @@ AHitter::AHitter()
 void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	FName AttachSocket = FName(TEXT("GripPoint"));
+	FTransform SocketTransform = Mesh1P->GetSocketTransform(AttachSocket);
+	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
+	SpawnParameters.Instigator = this;
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SocketTransform, SpawnParameters));
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), AttachSocket);
+	}
 }
 
-void AHitter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
+	Super::EndPlay(EndPlayReason);
 
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Destroy();
+	}
+}

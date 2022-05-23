@@ -13,6 +13,7 @@ class HITORDIE_API ABullet : public AActor
 {
 	GENERATED_BODY()
 	
+public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USphereComponent> Collider;
 

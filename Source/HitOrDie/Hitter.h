@@ -8,11 +8,19 @@
 
 class UCameraComponent;
 class USkeletalMeshComponent;
+class AWeapon;
 
 UCLASS()
 class HITORDIE_API AHitter : public ACharacter
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly, Category = Weapon)
+	AWeapon* CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	TSubclassOf<AWeapon> WeaponType;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
 	TObjectPtr<UCameraComponent> Camera;
@@ -27,6 +35,5 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

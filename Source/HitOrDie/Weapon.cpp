@@ -12,4 +12,5 @@ AWeapon::AWeapon()
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(RootComponent);
+	Mesh->CastShadow = false;
 }
