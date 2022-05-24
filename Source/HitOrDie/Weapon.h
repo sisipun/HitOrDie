@@ -8,6 +8,8 @@
 
 class USphereComponent;
 class USkeletalMeshComponent;
+class ABullet;
+class AHitter;
 
 UCLASS()
 class HITORDIE_API AWeapon : public AActor
@@ -21,7 +23,17 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh;
 	
+	UPROPERTY(EditAnywhere, Category = Bullet)
+	TSubclassOf<ABullet> BulletType;
+
 public:	
 	AWeapon();
+
+	void Fire();
+
+	void Attach(AHitter* AttachedHitter);
+
+private:
+	AHitter* Hitter;
 
 };

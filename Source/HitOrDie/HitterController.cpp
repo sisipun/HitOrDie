@@ -2,6 +2,8 @@
 
 #include "GameFramework/Character.h"
 
+#include "Hitter.h"
+
 AHitterController::AHitterController()
 {
 }
@@ -13,6 +15,8 @@ void AHitterController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Jump"), IE_Pressed, this, &AHitterController::Jump);
 	InputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AHitterController::StopJumping);
 
+	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AHitterController::Fire);
+
 	InputComponent->BindAxis(TEXT("MoveX"), this, &AHitterController::MoveX);
 	InputComponent->BindAxis(TEXT("MoveY"), this, &AHitterController::MoveY);
 
@@ -20,38 +24,48 @@ void AHitterController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("LookY"), this, &AHitterController::AddPitchInput);
 }
 
+void AHitterController::OnPossess(APawn* PossessedPawn)
+{
+	Super::OnPossess(PossessedPawn);
+	Hitter = Cast<AHitter>(PossessedPawn);
+}
+
 void AHitterController::Jump()
 {
-	ACharacter* ControlledPawn = Cast<ACharacter>(GetPawn());
-	if (ControlledPawn)
+	if (Hitter)
 	{
-		ControlledPawn->Jump();
+		Hitter->Jump();
+	}
+}
+
+void AHitterController::Fire()
+{
+	if (Hitter)
+	{
+		Hitter->Fire();
 	}
 }
 
 void AHitterController::StopJumping()
 {
-	ACharacter* ControlledPawn = Cast<ACharacter>(GetPawn());
-	if (ControlledPawn)
+	if (Hitter)
 	{
-		ControlledPawn->StopJumping();
+		Hitter->StopJumping();
 	}
 }
 
 void AHitterController::MoveX(float Scale)
 {
-	ACharacter* ControlledPawn = Cast<ACharacter>(GetPawn());
-	if (ControlledPawn && Scale != 0)
+	if (Hitter && Scale != 0)
 	{
-		ControlledPawn->AddMovementInput(ControlledPawn->GetActorRightVector(), Scale);
+		Hitter->AddMovementInput(Hitter->GetActorRightVector(), Scale);
 	}
 }
 
 void AHitterController::MoveY(float Scale)
 {
-	ACharacter* ControlledPawn = Cast<ACharacter>(GetPawn());
-	if (ControlledPawn && Scale != 0)
+	if (Hitter && Scale != 0)
 	{
-		ControlledPawn->AddMovementInput(ControlledPawn->GetActorForwardVector(), Scale);
+		Hitter->AddMovementInput(Hitter->GetActorForwardVector(), Scale);
 	}
 }

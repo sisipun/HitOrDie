@@ -18,12 +18,19 @@ public:
 
 	virtual void SetupInputComponent() override;
 
+	virtual void OnPossess(APawn* PossessedPawn) override;
+
 private:
 	void Jump();
+
+	void Fire();
 
 	void StopJumping();
 
 	void MoveX(float Scale);
 	
 	void MoveY(float Scale);
+
+private:
+	AHitter* Hitter;
 };

@@ -26,13 +26,22 @@ void AHitter::BeginPlay()
 	Super::BeginPlay();
 
 	FName AttachSocket = FName(TEXT("GripPoint"));
-	FTransform SocketTransform = Mesh1P->GetSocketTransform(AttachSocket);
+	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AttachSocket);
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Instigator = this;
-	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SocketTransform, SpawnParameters));
+	SpawnParameters.Owner = this;
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, SpawnParameters));
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->AttachToComponent(Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), AttachSocket);
+		CurrentWeapon->Attach(this);
+	}
+}
+
+void AHitter::Fire()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Fire();
 	}
 }
 

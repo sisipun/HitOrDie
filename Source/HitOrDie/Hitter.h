@@ -31,6 +31,8 @@ public:
 public:
 	AHitter();
 
+	void Fire();
+
 protected:
 	virtual void BeginPlay() override;
 
