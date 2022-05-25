@@ -31,7 +31,11 @@ public:
 
 	void Fire();
 
-	void Attach(AHitter* AttachedHitter);
+	void AttachTo(AHitter* AttachedHitter);
+
+public:
+	static const FName GripSocketName;
+	static const FName MuzzleSocketName;
 
 private:
 	AHitter* Hitter;

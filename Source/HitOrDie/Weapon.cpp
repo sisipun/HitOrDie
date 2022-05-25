@@ -6,6 +6,9 @@
 #include "Hitter.h"
 #include "Bullet.h"
 
+const FName AWeapon::GripSocketName = FName(TEXT("GripPoint"));
+const FName AWeapon::MuzzleSocketName = FName(TEXT("Muzzle"));
+
 AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -25,22 +28,20 @@ void AWeapon::Fire()
 		return;
 	}
 
-	FTransform SpawnLocation = Mesh->GetSocketTransform(FName(TEXT("Muzzle")));
-	//FRotator SpawnRotation = Cast<APlayerController>(Hitter->GetController())->PlayerCameraManager->GetCameraRotation();
+	FTransform SpawnLocation = Mesh->GetSocketTransform(MuzzleSocketName);
 	
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Instigator = Hitter;
 	SpawnParameters.Owner = Hitter;
-	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButDontSpawnIfColliding;
 	
 	GetWorld()->SpawnActor(BulletType, &SpawnLocation, SpawnParameters);
 }
 
-void AWeapon::Attach(AHitter* AttachedHitter)
+void AWeapon::AttachTo(AHitter* AttachedHitter)
 {
 	Hitter = AttachedHitter;
 	if (Hitter)
 	{
-		AttachToComponent(Hitter->Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), FName(TEXT("GripPoint")));
+		AttachToComponent(Hitter->Mesh1P, FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), GripSocketName);
 	}
 }

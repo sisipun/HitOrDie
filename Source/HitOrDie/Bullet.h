@@ -26,4 +26,10 @@ public:
 public:	
 	ABullet();
 
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

@@ -25,15 +25,15 @@ void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FName AttachSocket = FName(TEXT("GripPoint"));
-	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AttachSocket);
+	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AWeapon::GripSocketName);
 	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
 	SpawnParameters.Instigator = this;
 	SpawnParameters.Owner = this;
+	
 	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, SpawnParameters));
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->Attach(this);
+		CurrentWeapon->AttachTo(this);
 	}
 }
 
