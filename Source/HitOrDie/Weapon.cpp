@@ -14,9 +14,15 @@ AWeapon::AWeapon()
 	PrimaryActorTick.bCanEverTick = true;
 
 	Collider = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
+	Collider->SetGenerateOverlapEvents(false);
+	Collider->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	Collider->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	RootComponent = Collider;
 
 	Mesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh"));
+	Mesh->SetGenerateOverlapEvents(false);
+	Mesh->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->CastShadow = false;
 }
