@@ -1,5 +1,6 @@
 #include "Weapon.h"
 
+#include "Components/AudioComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
@@ -25,6 +26,8 @@ AWeapon::AWeapon()
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->CastShadow = false;
+
+	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
 }
 
 void AWeapon::Fire()

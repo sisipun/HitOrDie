@@ -8,6 +8,7 @@
 
 class USphereComponent;
 class USkeletalMeshComponent;
+class UAudioComponent;
 class ABullet;
 class AHitter;
 
@@ -22,6 +23,9 @@ public:
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Audio)
+	TObjectPtr<UAudioComponent> Audio;
 	
 	UPROPERTY(EditAnywhere, Category = Bullet)
 	TSubclassOf<ABullet> BulletType;
