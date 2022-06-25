@@ -27,19 +27,22 @@ void AHitterController::SetupInputComponent()
 void AHitterController::OnPossess(APawn* PossessedPawn)
 {
 	Super::OnPossess(PossessedPawn);
-	Hitter = Cast<AHitter>(PossessedPawn);
+	UE_LOG(LogTemp, Warning, TEXT("POSS"));
 }
 
 void AHitterController::Jump()
 {
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("J EXEC"));
 		Hitter->Jump();
 	}
 }
 
 void AHitterController::Fire()
 {
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter)
 	{
 		Hitter->Fire();
@@ -48,6 +51,7 @@ void AHitterController::Fire()
 
 void AHitterController::StopJumping()
 {
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter)
 	{
 		Hitter->StopJumping();
@@ -56,6 +60,7 @@ void AHitterController::StopJumping()
 
 void AHitterController::MoveX(float Scale)
 {
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter && Scale != 0)
 	{
 		Hitter->AddMovementInput(Hitter->GetActorRightVector(), Scale);
@@ -64,6 +69,7 @@ void AHitterController::MoveX(float Scale)
 
 void AHitterController::MoveY(float Scale)
 {
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter && Scale != 0)
 	{
 		Hitter->AddMovementInput(Hitter->GetActorForwardVector(), Scale);

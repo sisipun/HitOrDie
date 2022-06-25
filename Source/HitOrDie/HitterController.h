@@ -30,7 +30,4 @@ private:
 	void MoveX(float Scale);
 	
 	void MoveY(float Scale);
-
-private:
-	AHitter* Hitter;
 };
