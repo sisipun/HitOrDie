@@ -11,6 +11,9 @@ ABullet::ABullet()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+	SetReplicateMovement(true);
+
 	Collider = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 	Collider->SetGenerateOverlapEvents(true);
 	Collider->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);

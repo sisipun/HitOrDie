@@ -27,7 +27,6 @@ void AHitterController::SetupInputComponent()
 void AHitterController::OnPossess(APawn* PossessedPawn)
 {
 	Super::OnPossess(PossessedPawn);
-	UE_LOG(LogTemp, Warning, TEXT("POSS"));
 }
 
 void AHitterController::Jump()
@@ -35,7 +34,6 @@ void AHitterController::Jump()
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("J EXEC"));
 		Hitter->Jump();
 	}
 }

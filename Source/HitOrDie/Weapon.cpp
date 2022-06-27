@@ -14,6 +14,8 @@ AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	bReplicates = true;
+
 	Collider = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 	Collider->SetGenerateOverlapEvents(false);
 	Collider->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
@@ -28,22 +30,6 @@ AWeapon::AWeapon()
 	Mesh->CastShadow = false;
 
 	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
-}
-
-void AWeapon::Fire()
-{
-	if (!Hitter)
-	{
-		return;
-	}
-
-	FTransform SpawnLocation = Mesh->GetSocketTransform(MuzzleSocketName);
-	
-	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
-	SpawnParameters.Instigator = Hitter;
-	SpawnParameters.Owner = Hitter;
-	
-	GetWorld()->SpawnActor(BulletType, &SpawnLocation, SpawnParameters);
 }
 
 void AWeapon::AttachTo(AHitter* AttachedHitter)

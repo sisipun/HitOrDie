@@ -5,6 +5,7 @@
 #include "Components/SkeletalMeshComponent.h"
 
 #include "Weapon.h"
+#include "Bullet.h"
 
 AHitter::AHitter()
 {
@@ -24,13 +25,14 @@ AHitter::AHitter()
 void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AWeapon::GripSocketName);
-	FActorSpawnParameters SpawnParameters = FActorSpawnParameters();
-	SpawnParameters.Instigator = this;
-	SpawnParameters.Owner = this;
 	
-	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, SpawnParameters));
+	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AWeapon::GripSocketName);
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, spawnParameters));
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->AttachTo(this);
@@ -41,7 +43,9 @@ void AHitter::Fire()
 {
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->Fire();
+		FTransform SpawnLocation = CurrentWeapon->Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
+
+		Server_SpawnBullet(CurrentWeapon->BulletType, SpawnLocation);
 	}
 }
 
@@ -53,4 +57,13 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		CurrentWeapon->Destroy();
 	}
+}
+
+void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
+{
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	GetWorld()->SpawnActor(BulletType, &SpawnLocation, spawnParameters);
 }

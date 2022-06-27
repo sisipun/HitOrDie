@@ -33,8 +33,6 @@ public:
 public:	
 	AWeapon();
 
-	void Fire();
-
 	void AttachTo(AHitter* AttachedHitter);
 
 public:

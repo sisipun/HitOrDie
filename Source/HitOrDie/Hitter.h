@@ -16,6 +16,10 @@ class HITORDIE_API AHitter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	UFUNCTION(Server, Reliable)
+	void Server_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
+
+public:
 	UPROPERTY(BlueprintReadOnly, Category = Weapon)
 	AWeapon* CurrentWeapon;
 
