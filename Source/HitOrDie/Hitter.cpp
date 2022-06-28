@@ -20,13 +20,19 @@ AHitter::AHitter()
 	Mesh1P->SetOnlyOwnerSee(true);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
+
+	Mesh3P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh3P"));
+	Mesh3P->SetupAttachment(Camera);
+	Mesh3P->SetOwnerNoSee(true);
 }
 
 void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	FTransform SpawnTransform = Mesh1P->GetSocketTransform(AWeapon::GripSocketName);
+	FTransform SpawnTransform = IsLocallyControlled() 
+		? Mesh1P->GetSocketTransform(AWeapon::GripSocketName) 
+		: Mesh3P->GetSocketTransform(AWeapon::GripSocketName);
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
@@ -61,6 +67,8 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Fire"));
+
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;

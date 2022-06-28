@@ -29,8 +29,11 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
 	TObjectPtr<UCameraComponent> Camera;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
+	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh1P;
+
+	UPROPERTY(VisibleDefaultsOnly, Category = Body)
+	TObjectPtr<USkeletalMeshComponent> Mesh3P;
 
 public:
 	AHitter();
