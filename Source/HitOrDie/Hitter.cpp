@@ -3,6 +3,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 #include "Weapon.h"
 #include "Bullet.h"
@@ -26,12 +27,34 @@ AHitter::AHitter()
 	Mesh3P->SetOwnerNoSee(true);
 }
 
+void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AHitter, Health);
+}
+
+void AHitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AHitter, MaxHealth))
+	{
+		Health = MaxHealth;
+	}
+}
+
 void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	FTransform SpawnTransform = IsLocallyControlled() 
-		? Mesh1P->GetSocketTransform(AWeapon::GripSocketName) 
+
+	Health = MaxHealth;
+	SpawnWeapon();
+}
+
+void AHitter::SpawnWeapon()
+{
+	FTransform SpawnTransform = IsLocallyControlled()
+		? Mesh1P->GetSocketTransform(AWeapon::GripSocketName)
 		: Mesh3P->GetSocketTransform(AWeapon::GripSocketName);
 
 	FActorSpawnParameters spawnParameters;
@@ -55,6 +78,22 @@ void AHitter::Fire()
 	}
 }
 
+void AHitter::Hit(float Value)
+{
+	Health -= Value;
+	if (Health < 0.0f)
+	{
+		Health = 0.0f;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Hit %f, Current Health %f"), Value, Health);
+}
+
+void AHitter::OnRep_Health()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Hitted. Current Health %f"), Health);
+}
+
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -67,8 +106,6 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fire"));
-
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;

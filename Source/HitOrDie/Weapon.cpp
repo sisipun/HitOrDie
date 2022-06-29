@@ -13,7 +13,7 @@ AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	bReplicates = true;
+	bReplicates = false;
 
 	Collider = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 	Collider->SetGenerateOverlapEvents(false);

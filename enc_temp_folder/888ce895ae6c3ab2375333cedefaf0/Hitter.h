@@ -38,7 +38,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Stats)
 	float MaxHealth;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Health, VisibleAnywhere, Category = Stats)
+	UPROPERTY(Replicated, VisibleAnywhere, Category = Stats)
 	float Health;
 
 public:
@@ -57,8 +57,6 @@ protected:
 
 private:
 	void SpawnWeapon();
-
-	UFUNCTION() void OnRep_Health();
 
 public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
