@@ -8,7 +8,6 @@
 
 class USphereComponent;
 class USkeletalMeshComponent;
-class UAudioComponent;
 class ABullet;
 class AHitter;
 
