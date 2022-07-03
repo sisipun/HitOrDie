@@ -20,7 +20,8 @@ public:
 public:	
 	ASoundEmitter();
 
-protected:
-	virtual void BeginPlay() override;
+	bool GetPossibleAction() const;
 
+protected:
+	virtual void BeginPlay() override; 
 };

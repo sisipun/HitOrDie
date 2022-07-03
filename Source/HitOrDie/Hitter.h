@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USkeletalMeshComponent;
 class AWeapon;
+class ASoundEmitter;
 
 UCLASS()
 class HITORDIE_API AHitter : public ACharacter
@@ -62,4 +63,7 @@ private:
 
 public:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+private:
+	TObjectPtr<ASoundEmitter> SoundEmitter;
 };
