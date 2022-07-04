@@ -49,6 +49,8 @@ public:
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	void Fire();
 
 	void Hit(float Value);
@@ -57,13 +59,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UFUNCTION()
+	void OnRep_Health();
+
 	void SpawnWeapon();
-
-	UFUNCTION() void OnRep_Health();
-
-public:
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-private:
-	TObjectPtr<ASoundEmitter> SoundEmitter;
 };

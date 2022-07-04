@@ -14,10 +14,17 @@ ASoundEmitter::ASoundEmitter()
 void ASoundEmitter::BeginPlay()
 {
 	Super::BeginPlay();
+	Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
 	Audio->Play();
 }
 
 bool ASoundEmitter::GetPossibleAction() const
 {
-	return FMath::RandBool();
+	return CanFire;
+}
+
+void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Percent: %f"), PlaybackPercent);
+	CanFire = int(PlaybackPercent * 100) % 2 == 0;
 }

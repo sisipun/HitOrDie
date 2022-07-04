@@ -3,12 +3,11 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "EngineUtils.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Weapon.h"
 #include "Bullet.h"
-#include "SoundEmitter.h"
+#include "HitOrDieGameStateBase.h"
 
 AHitter::AHitter()
 {
@@ -49,8 +48,6 @@ void AHitter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
-
 	Health = MaxHealth;
 	SpawnWeapon();
 }
@@ -74,7 +71,8 @@ void AHitter::SpawnWeapon()
 
 void AHitter::Fire()
 {
-	if (CurrentWeapon && SoundEmitter && SoundEmitter->GetPossibleAction())
+	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
+	if (CurrentWeapon && GameState && GameState->GetPossibleAction())
 	{
 		FTransform SpawnLocation = CurrentWeapon->Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
 

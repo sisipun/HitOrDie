@@ -24,4 +24,11 @@ public:
 
 protected:
 	virtual void BeginPlay() override; 
+
+private:
+	UFUNCTION() 
+	void OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
+
+private:
+	bool CanFire;
 };
