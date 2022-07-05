@@ -7,6 +7,23 @@
 #include "SoundEmitter.generated.h"
 
 class UAudioComponent;
+class USoundBase;
+
+USTRUCT()
+struct FSoundProperties
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(EditAnywhere, Category = Sound)
+	TObjectPtr<USoundBase> Sound;
+
+	UPROPERTY(EditAnywhere, Category = Timing)
+	TMap<float, bool> ActionTimings;
+
+	UPROPERTY(EditAnywhere, Category = Timing)
+	float ActionLenght;
+};
 
 UCLASS()
 class HITORDIE_API ASoundEmitter : public AActor
@@ -16,6 +33,9 @@ class HITORDIE_API ASoundEmitter : public AActor
 public:
 	UPROPERTY(VisibleAnywhere, Category = Audio)
 	TObjectPtr<UAudioComponent> Audio;
+
+	UPROPERTY(EditAnywhere, Category = Audio)
+	FSoundProperties SoundProperties;
 
 public:	
 	ASoundEmitter();

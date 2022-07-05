@@ -14,6 +14,7 @@ ASoundEmitter::ASoundEmitter()
 void ASoundEmitter::BeginPlay()
 {
 	Super::BeginPlay();
+	Audio->Sound = SoundProperties.Sound;
 	Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
 	Audio->Play();
 }
@@ -25,6 +26,15 @@ bool ASoundEmitter::GetPossibleAction() const
 
 void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Percent: %f"), PlaybackPercent);
-	CanFire = int(PlaybackPercent * 100) % 2 == 0;
+	float PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
+	UE_LOG(LogTemp, Warning, TEXT("Percent: %f, Current Position: %f"), PlaybackPercent, PlaybackValue);
+
+	CanFire = false;
+	for (TPair<float, bool> ActionTiming : SoundProperties.ActionTimings)
+	{
+		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + SoundProperties.ActionLenght)
+		{
+			CanFire = ActionTiming.Value;
+		}
+	}
 }
