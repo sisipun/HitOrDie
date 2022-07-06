@@ -7,6 +7,7 @@
 #include "HitOrDieGameStateBase.generated.h"
 
 class ASoundEmitter;
+enum class ActionType : uint8;
 
 UCLASS()
 class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
@@ -14,7 +15,7 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 	GENERATED_BODY()
 
 public:
-	bool GetPossibleAction() const;
+	ActionType GetPossibleAction() const;
 
 protected:
 	virtual void BeginPlay() override;

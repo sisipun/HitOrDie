@@ -9,7 +9,15 @@
 class UAudioComponent;
 class USoundBase;
 
-USTRUCT()
+UENUM(BlueprintType)
+enum class ActionType : uint8
+{
+	NONE UMETA(DisplayName = "None"),
+	FIRE UMETA(DisplayName = "Fire"),
+	RELOAD UMETA(DisplayName = "Reload")
+};
+
+USTRUCT(BlueprintType)
 struct FSoundProperties
 {
 	GENERATED_BODY();
@@ -19,7 +27,7 @@ public:
 	TObjectPtr<USoundBase> Sound;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
-	TMap<float, bool> ActionTimings;
+	TMap<float, ActionType> ActionTimings;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
 	float ActionLenght;
@@ -40,7 +48,7 @@ public:
 public:	
 	ASoundEmitter();
 
-	bool GetPossibleAction() const;
+	ActionType GetPossibleAction() const;
 
 protected:
 	virtual void BeginPlay() override; 
@@ -50,5 +58,5 @@ private:
 	void OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
 private:
-	bool CanFire;
+	ActionType CurrentAction;
 };

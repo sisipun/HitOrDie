@@ -8,6 +8,7 @@
 #include "Weapon.h"
 #include "Bullet.h"
 #include "HitOrDieGameStateBase.h"
+#include "SoundEmitter.h"
 
 AHitter::AHitter()
 {
@@ -72,7 +73,9 @@ void AHitter::SpawnWeapon()
 void AHitter::Fire()
 {
 	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
-	if (CurrentWeapon && GameState && GameState->GetPossibleAction())
+	check(GameState);
+
+	if (CurrentWeapon && GameState->GetPossibleAction() == ActionType::FIRE)
 	{
 		FTransform SpawnLocation = CurrentWeapon->Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
 

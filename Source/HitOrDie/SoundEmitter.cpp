@@ -19,9 +19,9 @@ void ASoundEmitter::BeginPlay()
 	Audio->Play();
 }
 
-bool ASoundEmitter::GetPossibleAction() const
+ActionType ASoundEmitter::GetPossibleAction() const
 {
-	return CanFire;
+	return CurrentAction;
 }
 
 void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
@@ -29,12 +29,12 @@ void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, c
 	float PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
 	UE_LOG(LogTemp, Warning, TEXT("Percent: %f, Current Position: %f"), PlaybackPercent, PlaybackValue);
 
-	CanFire = false;
-	for (TPair<float, bool> ActionTiming : SoundProperties.ActionTimings)
+	CurrentAction = ActionType::NONE;
+	for (TPair<float, ActionType> ActionTiming : SoundProperties.ActionTimings)
 	{
 		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + SoundProperties.ActionLenght)
 		{
-			CanFire = ActionTiming.Value;
+			CurrentAction = ActionTiming.Value;
 		}
 	}
 }
