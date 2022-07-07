@@ -32,7 +32,7 @@ void AHitterController::OnPossess(APawn* PossessedPawn)
 void AHitterController::Jump()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter)
+	if (Hitter && !Hitter->bDead)
 	{
 		Hitter->Jump();
 	}
@@ -41,7 +41,7 @@ void AHitterController::Jump()
 void AHitterController::Fire()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter)
+	if (Hitter && !Hitter->bDead)
 	{
 		Hitter->Fire();
 	}
@@ -50,7 +50,7 @@ void AHitterController::Fire()
 void AHitterController::StopJumping()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter)
+	if (Hitter && !Hitter->bDead)
 	{
 		Hitter->StopJumping();
 	}
@@ -59,7 +59,7 @@ void AHitterController::StopJumping()
 void AHitterController::MoveX(float Scale)
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && Scale != 0)
+	if (Hitter && !Hitter->bDead && Scale != 0)
 	{
 		Hitter->AddMovementInput(Hitter->GetActorRightVector(), Scale);
 	}
@@ -68,7 +68,7 @@ void AHitterController::MoveX(float Scale)
 void AHitterController::MoveY(float Scale)
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && Scale != 0)
+	if (Hitter && !Hitter->bDead && Scale != 0)
 	{
 		Hitter->AddMovementInput(Hitter->GetActorForwardVector(), Scale);
 	}

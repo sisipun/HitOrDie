@@ -41,6 +41,9 @@ public:
 
 	UPROPERTY(ReplicatedUsing=OnRep_Health, VisibleAnywhere, Category = Stats)
 	float Health;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_bDead, VisibleAnywhere, Category = Stats)
+	bool bDead;
 
 public:
 	AHitter();
@@ -61,6 +64,9 @@ protected:
 private:
 	UFUNCTION()
 	void OnRep_Health();
+
+	UFUNCTION()
+	void OnRep_bDead();
 
 	void SpawnWeapon();
 };

@@ -23,10 +23,12 @@ AHitter::AHitter()
 	Mesh1P->SetOnlyOwnerSee(true);
 	Mesh1P->bCastDynamicShadow = false;
 	Mesh1P->CastShadow = false;
+	Mesh1P->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
 	Mesh3P = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Mesh3P"));
 	Mesh3P->SetupAttachment(Camera);
 	Mesh3P->SetOwnerNoSee(true);
+	Mesh3P->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 }
 
 void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -34,6 +36,7 @@ void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AHitter, Health);
+	DOREPLIFETIME(AHitter, bDead);
 }
 
 void AHitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -50,6 +53,7 @@ void AHitter::BeginPlay()
 	Super::BeginPlay();
 
 	Health = MaxHealth;
+	bDead = false;
 	SpawnWeapon();
 }
 
@@ -86,9 +90,11 @@ void AHitter::Fire()
 void AHitter::Hit(float Value)
 {
 	Health -= Value;
-	if (Health < 0.0f)
+	if (Health <= 0.0f)
 	{
 		Health = 0.0f;
+		bDead = true;
+		OnRep_bDead();
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Hit %f, Current Health %f"), Value, Health);
@@ -97,6 +103,18 @@ void AHitter::Hit(float Value)
 void AHitter::OnRep_Health()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Hitted. Current Health %f"), Health);
+}
+
+void AHitter::OnRep_bDead()
+{
+	if (bDead)
+	{
+		Mesh1P->SetSimulatePhysics(true);
+		Mesh3P->SetSimulatePhysics(true);
+		UE_LOG(LogTemp, Warning, TEXT("Simultate"));
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("Dead"));
 }
 
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
