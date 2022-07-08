@@ -27,7 +27,6 @@ ActionType ASoundEmitter::GetPossibleAction() const
 void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
 {
 	float PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
-	// UE_LOG(LogTemp, Warning, TEXT("Percent: %f, Current Position: %f"), PlaybackPercent, PlaybackValue);
 
 	CurrentAction = ActionType::NONE;
 	for (TPair<float, ActionType> ActionTiming : SoundProperties.ActionTimings)
@@ -35,6 +34,7 @@ void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, c
 		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + SoundProperties.ActionLenght)
 		{
 			CurrentAction = ActionTiming.Value;
+			break;
 		}
 	}
 }

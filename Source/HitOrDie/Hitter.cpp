@@ -111,10 +111,7 @@ void AHitter::OnRep_bDead()
 	{
 		Mesh1P->SetSimulatePhysics(true);
 		Mesh3P->SetSimulatePhysics(true);
-		UE_LOG(LogTemp, Warning, TEXT("Simultate"));
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Dead"));
 }
 
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)

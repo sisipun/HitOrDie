@@ -36,13 +36,13 @@ public:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh3P;
 
-	UPROPERTY(EditAnywhere, Category = Stats)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	float MaxHealth;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Health, VisibleAnywhere, Category = Stats)
+	UPROPERTY(ReplicatedUsing=OnRep_Health, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	float Health;
 	
-	UPROPERTY(ReplicatedUsing=OnRep_bDead, VisibleAnywhere, Category = Stats)
+	UPROPERTY(ReplicatedUsing=OnRep_bDead, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
 	bool bDead;
 
 public:
