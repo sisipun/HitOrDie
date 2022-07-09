@@ -14,27 +14,35 @@ ASoundEmitter::ASoundEmitter()
 void ASoundEmitter::BeginPlay()
 {
 	Super::BeginPlay();
-	Audio->Sound = SoundProperties.Sound;
-	Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
-	Audio->Play();
-}
+	PlaybackValue = 0.0f;
 
-ActionType ASoundEmitter::GetPossibleAction() const
-{
-	return CurrentAction;
-}
-
-void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
-{
-	float PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
-
-	CurrentAction = ActionType::NONE;
-	for (TPair<float, ActionType> ActionTiming : SoundProperties.ActionTimings)
+	TObjectPtr<FSoundProperties> SoundProperties = SoundDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
+	if (SoundProperties)
 	{
-		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + SoundProperties.ActionLenght)
+		ActionLenght = SoundProperties->ActionLenght;
+		ActionTimings = SoundProperties->ActionTimings;
+
+		Audio->Sound = SoundProperties->Sound;
+		Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
+		Audio->Play();
+	}
+}
+
+EActionType ASoundEmitter::GetPossibleAction() const
+{
+	EActionType CurrentAction = EActionType::NONE;
+	for (TPair<float, EActionType> ActionTiming : ActionTimings)
+	{
+		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + ActionLenght)
 		{
 			CurrentAction = ActionTiming.Value;
 			break;
 		}
 	}
+	return CurrentAction;
+}
+
+void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
+{
+	PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
 }

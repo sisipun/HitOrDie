@@ -79,7 +79,7 @@ void AHitter::Fire()
 	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
 	check(GameState);
 
-	if (CurrentWeapon && GameState->GetPossibleAction() == ActionType::FIRE)
+	if (CurrentWeapon && GameState->GetPossibleAction() == EActionType::FIRE)
 	{
 		FTransform SpawnLocation = CurrentWeapon->Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
 

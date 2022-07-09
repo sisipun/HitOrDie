@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 
+#include "Engine/DataTable.h"
 #include "GameFramework/Actor.h"
 
 #include "SoundEmitter.generated.h"
@@ -10,7 +11,7 @@ class UAudioComponent;
 class USoundBase;
 
 UENUM(BlueprintType)
-enum class ActionType : uint8
+enum class EActionType : uint8
 {
 	NONE UMETA(DisplayName = "None"),
 	FIRE UMETA(DisplayName = "Fire"),
@@ -18,7 +19,7 @@ enum class ActionType : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FSoundProperties
+struct FSoundProperties : public FTableRowBase
 {
 	GENERATED_BODY();
 
@@ -27,7 +28,7 @@ public:
 	TObjectPtr<USoundBase> Sound;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
-	TMap<float, ActionType> ActionTimings;
+	TMap<float, EActionType> ActionTimings;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
 	float ActionLenght;
@@ -43,12 +44,15 @@ public:
 	TObjectPtr<UAudioComponent> Audio;
 
 	UPROPERTY(EditAnywhere, Category = Audio)
-	FSoundProperties SoundProperties;
+	TObjectPtr<UDataTable> SoundDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
+	FName CurrentSound;
 
 public:	
 	ASoundEmitter();
 
-	ActionType GetPossibleAction() const;
+	EActionType GetPossibleAction() const;
 
 protected:
 	virtual void BeginPlay() override; 
@@ -58,5 +62,8 @@ private:
 	void OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
 private:
-	ActionType CurrentAction;
+	float ActionLenght;
+	TMap<float, EActionType> ActionTimings;
+
+	float PlaybackValue;
 };

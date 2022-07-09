@@ -8,7 +8,7 @@ void AHitOrDieGameStateBase::BeginPlay()
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
 }
 
-ActionType AHitOrDieGameStateBase::GetPossibleAction() const
+EActionType AHitOrDieGameStateBase::GetPossibleAction() const
 {
 	check(SoundEmitter);
 
