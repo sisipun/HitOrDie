@@ -6,12 +6,11 @@
 #include "Hitter.h"
 #include "Bullet.h"
 
-const FName AWeapon::GripSocketName = FName(TEXT("GripPoint"));
 const FName AWeapon::MuzzleSocketName = FName(TEXT("Muzzle"));
 
 AWeapon::AWeapon()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	bReplicates = false;
 
@@ -35,9 +34,19 @@ void AWeapon::AttachTo(AHitter* AttachedHitter)
 	if (Hitter)
 	{
 		AttachToComponent(
-			Hitter->IsLocallyControlled() ? Hitter->Mesh1P : Hitter->Mesh3P,
+			Hitter->GetMesh(),
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, true), 
-			GripSocketName
+			AHitter::GripSocketName
 		);
 	}
+}
+
+TSubclassOf<ABullet> AWeapon::GetBulletType() const
+{
+	return BulletType;
+}
+
+FTransform AWeapon::GetMuzzleTransform() const
+{
+	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
 }

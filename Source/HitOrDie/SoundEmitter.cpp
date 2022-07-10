@@ -16,7 +16,7 @@ void ASoundEmitter::BeginPlay()
 	Super::BeginPlay();
 	PlaybackValue = 0.0f;
 
-	TObjectPtr<FSoundProperties> SoundProperties = SoundDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
+	TObjectPtr<FSoundProperties> SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
 	if (SoundProperties)
 	{
 		ActionLenght = SoundProperties->ActionLenght;

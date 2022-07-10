@@ -9,6 +9,9 @@
 #include "Bullet.h"
 #include "HitOrDieGameStateBase.h"
 #include "SoundEmitter.h"
+#include "HitterController.h"
+
+const FName AHitter::GripSocketName = FName(TEXT("GripPoint"));
 
 AHitter::AHitter()
 {
@@ -60,8 +63,8 @@ void AHitter::BeginPlay()
 void AHitter::SpawnWeapon()
 {
 	FTransform SpawnTransform = IsLocallyControlled()
-		? Mesh1P->GetSocketTransform(AWeapon::GripSocketName)
-		: Mesh3P->GetSocketTransform(AWeapon::GripSocketName);
+		? Mesh1P->GetSocketTransform(GripSocketName)
+		: Mesh3P->GetSocketTransform(GripSocketName);
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
@@ -81,20 +84,25 @@ void AHitter::Fire()
 
 	if (CurrentWeapon && GameState->GetPossibleAction() == EActionType::FIRE)
 	{
-		FTransform SpawnLocation = CurrentWeapon->Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
+		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
 
-		Server_SpawnBullet(CurrentWeapon->BulletType, SpawnLocation);
+		Server_SpawnBullet(CurrentWeapon->GetBulletType(), SpawnLocation);
 	}
 }
 
-void AHitter::Hit(float Value)
+void AHitter::Auth_Hit(float Value)
 {
+	check(HasAuthority());
+
 	Health -= Value;
 	if (Health <= 0.0f)
 	{
 		Health = 0.0f;
 		bDead = true;
 		OnRep_bDead();
+
+		FTimerHandle DeadTimer;
+		GetWorldTimerManager().SetTimer(DeadTimer, Cast<AHitterController>(GetController()), &AHitterController::Auth_OnDead, 3.0f, false);
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Hit %f, Current Health %f"), Value, Health);
@@ -114,6 +122,27 @@ void AHitter::OnRep_bDead()
 	}
 }
 
+void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
+{
+	check(HasAuthority());
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	GetWorld()->SpawnActor(BulletType, &SpawnLocation, spawnParameters);
+}
+
+TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
+{
+	return IsLocallyControlled() ? Mesh1P : Mesh3P;
+}
+
+bool AHitter::IsDead() const
+{
+	return bDead;
+}
+
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -122,13 +151,4 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		CurrentWeapon->Destroy();
 	}
-}
-
-void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
-{
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = this;
-
-	GetWorld()->SpawnActor(BulletType, &SpawnLocation, spawnParameters);
 }

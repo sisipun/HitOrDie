@@ -20,7 +20,14 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
 
-public:
+private:
+	UFUNCTION()
+	void OnRep_Health();
+
+	UFUNCTION()
+	void OnRep_bDead();
+
+protected:
 	UPROPERTY(BlueprintReadOnly, Category = Weapon)
 	AWeapon* CurrentWeapon;
 
@@ -48,7 +55,7 @@ public:
 public:
 	AHitter();
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
@@ -56,17 +63,18 @@ public:
 
 	void Fire();
 
-	void Hit(float Value);
+	void Auth_Hit(float Value);
+
+	TObjectPtr<USkeletalMeshComponent> GetMesh() const;
+
+	bool IsDead() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	UFUNCTION()
-	void OnRep_Health();
-
-	UFUNCTION()
-	void OnRep_bDead();
-
 	void SpawnWeapon();
+
+public:
+	static const FName GripSocketName;
 };

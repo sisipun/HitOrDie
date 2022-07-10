@@ -11,4 +11,6 @@ class HITORDIE_API AHitOrDieGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 	
+public:
+	AHitOrDieGameModeBase();
 };

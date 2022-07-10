@@ -16,7 +16,7 @@ class HITORDIE_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USphereComponent> Collider;
 
@@ -26,16 +26,19 @@ public:
 	UPROPERTY(EditAnywhere, Category = Bullet)
 	TSubclassOf<ABullet> BulletType;
 
+private:
+	UPROPERTY(Transient)
+	TObjectPtr<AHitter> Hitter;
+
 public:	
 	AWeapon();
 
 	void AttachTo(AHitter* AttachedHitter);
 
+	TSubclassOf<ABullet> GetBulletType() const;
+
+	FTransform GetMuzzleTransform() const;
+
 public:
-	static const FName GripSocketName;
 	static const FName MuzzleSocketName;
-
-private:
-	AHitter* Hitter;
-
 };

@@ -3,6 +3,11 @@
 #include "EngineUtils.h"
 #include "SoundEmitter.h"
 
+AHitOrDieGameStateBase::AHitOrDieGameStateBase()
+{
+	PrimaryActorTick.bCanEverTick = false;
+}
+
 void AHitOrDieGameStateBase::BeginPlay()
 {
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());

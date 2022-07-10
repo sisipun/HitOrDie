@@ -39,12 +39,12 @@ class HITORDIE_API ASoundEmitter : public AActor
 {
 	GENERATED_BODY()
 	
-public:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = Audio)
 	TObjectPtr<UAudioComponent> Audio;
 
 	UPROPERTY(EditAnywhere, Category = Audio)
-	TObjectPtr<UDataTable> SoundDataTable;
+	TObjectPtr<UDataTable> SoundPropertiesDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
 	FName CurrentSound;

@@ -20,6 +20,8 @@ public:
 
 	virtual void OnPossess(APawn* PossessedPawn) override;
 
+	void Auth_OnDead();
+
 private:
 	void Jump();
 
