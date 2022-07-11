@@ -14,6 +14,10 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintCallable)
+	EActionType GetPossibleAction() const;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<ASoundEmitter> SoundEmitter;
@@ -21,7 +25,7 @@ private:
 public:
 	AHitOrDieGameStateBase();
 
-	EActionType GetPossibleAction() const;
+	
 
 protected:
 	virtual void BeginPlay() override;

@@ -21,6 +21,9 @@ void ASoundEmitter::BeginPlay()
 	{
 		ActionLenght = SoundProperties->ActionLenght;
 		ActionTimings = SoundProperties->ActionTimings;
+		ActionTimings.KeySort([](const float& FirstKey, const float& SecondKey) {
+			return FirstKey < SecondKey;
+		});
 
 		Audio->Sound = SoundProperties->Sound;
 		Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
@@ -31,7 +34,7 @@ void ASoundEmitter::BeginPlay()
 EActionType ASoundEmitter::GetPossibleAction() const
 {
 	EActionType CurrentAction = EActionType::NONE;
-	for (TPair<float, EActionType> ActionTiming : ActionTimings)
+	for (const TPair<float, EActionType>& ActionTiming : ActionTimings)
 	{
 		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + ActionLenght)
 		{
