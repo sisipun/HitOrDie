@@ -9,6 +9,7 @@
 class UCameraComponent;
 class USkeletalMeshComponent;
 class AWeapon;
+class ABullet;
 class ASoundEmitter;
 
 UCLASS()
@@ -63,7 +64,7 @@ public:
 
 	void Fire();
 
-	void Auth_Hit(float Value);
+	void Auth_Hit(UPlayer* Hitter, float Value);
 
 	TObjectPtr<USkeletalMeshComponent> GetMesh() const;
 

@@ -3,6 +3,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
 
 #include "Weapon.h"
@@ -90,7 +91,7 @@ void AHitter::Fire()
 	}
 }
 
-void AHitter::Auth_Hit(float Value)
+void AHitter::Auth_Hit(UPlayer* Hitter, float Value)
 {
 	check(HasAuthority());
 
@@ -103,6 +104,10 @@ void AHitter::Auth_Hit(float Value)
 
 		FTimerHandle DeadTimer;
 		GetWorldTimerManager().SetTimer(DeadTimer, Cast<AHitterController>(GetController()), &AHitterController::Auth_OnDead, 3.0f, false);
+
+		AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
+		check(GameState);
+		GameState->Auth_OnKilled(Hitter, GetNetOwningPlayer());
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Hit %f, Current Health %f"), Value, Health);
@@ -146,7 +151,6 @@ bool AHitter::IsDead() const
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->Destroy();

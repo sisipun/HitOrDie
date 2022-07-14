@@ -53,7 +53,7 @@ void ABullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrim
 
 		if (Hitter && Hitted && Hitter->GetNetOwningPlayer() != Hitted->GetNetOwningPlayer())
 		{
-			Hitted->Auth_Hit(10.0f);
+			Hitted->Auth_Hit(Hitter->GetNetOwningPlayer(), 10.0f);
 			Destroy();
 		}
 	}

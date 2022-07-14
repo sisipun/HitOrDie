@@ -25,8 +25,11 @@ private:
 public:
 	AHitOrDieGameStateBase();
 
-	
+	void Auth_OnKilled(UPlayer* Hitter, UPlayer* Hitted);
 
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	TMap<FString, int32> PlayersScore;
 };
