@@ -19,6 +19,19 @@ enum class EActionType : uint8
 };
 
 USTRUCT(BlueprintType)
+struct FTiming
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(EditAnywhere, Category = Timing)
+	float StartSecond;
+
+	UPROPERTY(EditAnywhere, Category = Timing)
+	EActionType Action;
+};
+
+USTRUCT(BlueprintType)
 struct FSoundProperties : public FTableRowBase
 {
 	GENERATED_BODY();
@@ -28,7 +41,7 @@ public:
 	TObjectPtr<USoundBase> Sound;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
-	TMap<float, EActionType> ActionTimings;
+	TArray<FTiming> ActionTimings;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
 	float ActionLenght;
@@ -63,7 +76,7 @@ private:
 
 private:
 	float ActionLenght;
-	TMap<float, EActionType> ActionTimings;
+	TArray<FTiming> ActionTimings;
 
 	float PlaybackValue;
 };

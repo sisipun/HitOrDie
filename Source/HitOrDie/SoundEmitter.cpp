@@ -21,8 +21,8 @@ void ASoundEmitter::BeginPlay()
 	{
 		ActionLenght = SoundProperties->ActionLenght;
 		ActionTimings = SoundProperties->ActionTimings;
-		ActionTimings.KeySort([](const float& FirstKey, const float& SecondKey) {
-			return FirstKey < SecondKey;
+		ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) {
+			return FirstKey.StartSecond < SecondKey.StartSecond;
 		});
 
 		Audio->Sound = SoundProperties->Sound;
@@ -34,11 +34,11 @@ void ASoundEmitter::BeginPlay()
 EActionType ASoundEmitter::GetPossibleAction() const
 {
 	EActionType CurrentAction = EActionType::NONE;
-	for (const TPair<float, EActionType>& ActionTiming : ActionTimings)
+	for (const FTiming& ActionTiming : ActionTimings)
 	{
-		if (ActionTiming.Key < PlaybackValue && PlaybackValue < ActionTiming.Key + ActionLenght)
+		if (ActionTiming.StartSecond < PlaybackValue && PlaybackValue < ActionTiming.StartSecond + ActionLenght)
 		{
-			CurrentAction = ActionTiming.Value;
+			CurrentAction = ActionTiming.Action;
 			break;
 		}
 	}
