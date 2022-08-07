@@ -19,11 +19,14 @@ void ASoundEmitter::BeginPlay()
 	TObjectPtr<FSoundProperties> SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
 	if (SoundProperties)
 	{
-		ActionLenght = SoundProperties->ActionLenght;
-		ActionTimings = SoundProperties->ActionTimings;
-		ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) {
+		SoundProperties->ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) {
 			return FirstKey.StartSecond < SecondKey.StartSecond;
 		});
+
+		for (const FTiming& Timing : SoundProperties->ActionTimings)
+		{
+			ActionTimings.AddTail(Timing);
+		}
 
 		Audio->Sound = SoundProperties->Sound;
 		Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::OnAudioPlaybackPercent);
@@ -36,7 +39,7 @@ EActionType ASoundEmitter::GetPossibleAction() const
 	EActionType CurrentAction = EActionType::NONE;
 	for (const FTiming& ActionTiming : ActionTimings)
 	{
-		if (ActionTiming.StartSecond < PlaybackValue && PlaybackValue < ActionTiming.StartSecond + ActionLenght)
+		if (ActionTiming.StartSecond < PlaybackValue && PlaybackValue < ActionTiming.EndSecond)
 		{
 			CurrentAction = ActionTiming.Action;
 			break;

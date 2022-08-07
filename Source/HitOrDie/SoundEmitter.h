@@ -28,6 +28,9 @@ public:
 	float StartSecond;
 
 	UPROPERTY(EditAnywhere, Category = Timing)
+	float EndSecond;
+
+	UPROPERTY(EditAnywhere, Category = Timing)
 	EActionType Action;
 };
 
@@ -42,9 +45,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = Timing)
 	TArray<FTiming> ActionTimings;
-
-	UPROPERTY(EditAnywhere, Category = Timing)
-	float ActionLenght;
 };
 
 UCLASS()
@@ -75,8 +75,6 @@ private:
 	void OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
 private:
-	float ActionLenght;
-	TArray<FTiming> ActionTimings;
-
 	float PlaybackValue;
+	TDoubleLinkedList<FTiming> ActionTimings;
 };
