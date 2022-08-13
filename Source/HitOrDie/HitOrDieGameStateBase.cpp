@@ -3,7 +3,6 @@
 #include "GameFramework/PlayerState.h"
 
 #include "EngineUtils.h"
-#include "SoundEmitter.h"
 
 AHitOrDieGameStateBase::AHitOrDieGameStateBase()
 {
@@ -30,9 +29,16 @@ void AHitOrDieGameStateBase::Auth_OnKilled(UPlayer* Hitter, UPlayer* Hitted)
 	UE_LOG(LogTemp, Warning, TEXT("Score %s - %d"), *HitterName, PlayersScore[HitterName]);
 }
 
-EActionType AHitOrDieGameStateBase::GetPossibleAction() const
+TArray<FTiming> AHitOrDieGameStateBase::GetPossibleActions(float HalfPeriod) const
 {
 	check(SoundEmitter);
 
-	return SoundEmitter->GetPossibleAction();
+	return SoundEmitter->GetPossibleActions(HalfPeriod);
+}
+
+bool AHitOrDieGameStateBase::PerformAction(EActionType Action)
+{
+	check(SoundEmitter);
+
+	return SoundEmitter->PerformAction(Action);
 }

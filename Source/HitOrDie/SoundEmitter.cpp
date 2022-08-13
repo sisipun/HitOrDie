@@ -17,7 +17,7 @@ void ASoundEmitter::BeginPlay()
 	PlaybackValue = 0.0f;
 
 	TObjectPtr<FSoundProperties> SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
-	if (SoundProperties)
+	if (SoundProperties) 
 	{
 		SoundProperties->ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) {
 			return FirstKey.StartSecond < SecondKey.StartSecond;
@@ -34,18 +34,37 @@ void ASoundEmitter::BeginPlay()
 	}
 }
 
-EActionType ASoundEmitter::GetPossibleAction() const
+TArray<FTiming> ASoundEmitter::GetPossibleActions(float HalfPeriod) const
 {
-	EActionType CurrentAction = EActionType::NONE;
-	for (const FTiming& ActionTiming : ActionTimings)
+	TArray<FTiming> Actions;
+	for (const FTiming& Timing : ActionTimings)
 	{
-		if (ActionTiming.StartSecond < PlaybackValue && PlaybackValue < ActionTiming.EndSecond)
+		if (Timing.StartSecond < PlaybackValue + HalfPeriod && PlaybackValue < Timing.EndSecond - HalfPeriod)
 		{
-			CurrentAction = ActionTiming.Action;
-			break;
+			Actions.Add(Timing);
 		}
 	}
-	return CurrentAction;
+	return Actions;
+}
+
+bool ASoundEmitter::PerformAction(EActionType Action)
+{
+	TDoubleLinkedList<FTiming>::TDoubleLinkedListNode* Head = ActionTimings.GetHead();
+	while (Head != nullptr && Head->GetValue().EndSecond < PlaybackValue)
+	{
+		ActionTimings.RemoveNode(Head);
+		Head = ActionTimings.GetHead();
+	}
+
+	if (Head != nullptr && Head->GetValue().StartSecond < PlaybackValue && PlaybackValue < Head->GetValue().EndSecond)
+	{
+		ActionTimings.RemoveNode(Head);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void ASoundEmitter::OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)

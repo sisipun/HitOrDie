@@ -65,7 +65,8 @@ protected:
 public:	
 	ASoundEmitter();
 
-	EActionType GetPossibleAction() const;
+	TArray<FTiming> GetPossibleActions(float HalfPeriod) const;
+	bool PerformAction(EActionType Action);
 
 protected:
 	virtual void BeginPlay() override; 

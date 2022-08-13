@@ -4,10 +4,9 @@
 
 #include "GameFramework/GameStateBase.h"
 
-#include "HitOrDieGameStateBase.generated.h"
+#include "SoundEmitter.h"
 
-class ASoundEmitter;
-enum class EActionType : uint8;
+#include "HitOrDieGameStateBase.generated.h"
 
 UCLASS()
 class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
@@ -16,7 +15,10 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 
 public:
 	UFUNCTION(BlueprintCallable)
-	EActionType GetPossibleAction() const;
+	TArray<FTiming> GetPossibleActions(float HalfPeriod) const;
+
+	UFUNCTION(BlueprintCallable)
+	bool PerformAction(EActionType Action);
 
 private:
 	UPROPERTY(Transient)

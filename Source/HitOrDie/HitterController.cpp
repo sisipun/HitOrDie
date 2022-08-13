@@ -35,7 +35,6 @@ void AHitterController::Auth_OnDead()
 {
 	check(HasAuthority());
 
-	UE_LOG(LogTemp, Warning, TEXT("RESTART"));
 	GetPawn()->Destroy();
 	GetWorld()->GetAuthGameMode()->RestartPlayer(this);
 }
