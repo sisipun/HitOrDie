@@ -24,13 +24,13 @@ struct FTiming
 	GENERATED_BODY();
 
 public:
-	UPROPERTY(EditAnywhere, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
 	float StartSecond;
 
-	UPROPERTY(EditAnywhere, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
 	float EndSecond;
 
-	UPROPERTY(EditAnywhere, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
 	EActionType Action;
 };
 
@@ -65,8 +65,9 @@ protected:
 public:	
 	ASoundEmitter();
 
-	TArray<FTiming> GetPossibleActions(float HalfPeriod) const;
 	bool PerformAction(EActionType Action);
+	TArray<FTiming> GetPossibleActions(float PeriodBefore, float PeriodAfter) const;
+	float GetPlaybackValue() const;
 
 protected:
 	virtual void BeginPlay() override; 

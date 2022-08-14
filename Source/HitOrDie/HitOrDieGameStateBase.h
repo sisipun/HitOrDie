@@ -15,10 +15,13 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 
 public:
 	UFUNCTION(BlueprintCallable)
-	TArray<FTiming> GetPossibleActions(float HalfPeriod) const;
-
-	UFUNCTION(BlueprintCallable)
 	bool PerformAction(EActionType Action);
+
+	UFUNCTION(BlueprintPure)
+	TArray<FTiming> GetPossibleActions(float PeriodBefore, float PeriodAfter) const;
+
+	UFUNCTION(BlueprintPure)
+	float GetPlaybackValue() const;
 
 private:
 	UPROPERTY(Transient)

@@ -29,16 +29,23 @@ void AHitOrDieGameStateBase::Auth_OnKilled(UPlayer* Hitter, UPlayer* Hitted)
 	UE_LOG(LogTemp, Warning, TEXT("Score %s - %d"), *HitterName, PlayersScore[HitterName]);
 }
 
-TArray<FTiming> AHitOrDieGameStateBase::GetPossibleActions(float HalfPeriod) const
-{
-	check(SoundEmitter);
-
-	return SoundEmitter->GetPossibleActions(HalfPeriod);
-}
-
 bool AHitOrDieGameStateBase::PerformAction(EActionType Action)
 {
 	check(SoundEmitter);
 
 	return SoundEmitter->PerformAction(Action);
+}
+
+TArray<FTiming> AHitOrDieGameStateBase::GetPossibleActions(float PeriodBefore, float PeriodAfter) const
+{
+	check(SoundEmitter);
+
+	return SoundEmitter->GetPossibleActions(PeriodBefore, PeriodAfter);
+}
+
+float AHitOrDieGameStateBase::GetPlaybackValue() const
+{
+	check(SoundEmitter);
+
+	return SoundEmitter->GetPlaybackValue();
 }
