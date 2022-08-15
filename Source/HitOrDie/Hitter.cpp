@@ -18,6 +18,9 @@ AHitter::AHitter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
+	bReplicates = true;
+	SetReplicateMovement(true);
+
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetCapsuleComponent());
@@ -41,6 +44,7 @@ void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 
 	DOREPLIFETIME(AHitter, Health);
 	DOREPLIFETIME(AHitter, bDead);
+	DOREPLIFETIME(AHitter, bActionCooldown);
 }
 
 void AHitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -58,37 +62,59 @@ void AHitter::BeginPlay()
 
 	Health = MaxHealth;
 	bDead = false;
+	bActionCooldown = false;
 	SpawnWeapon();
 }
 
-void AHitter::SpawnWeapon()
+void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	FTransform SpawnTransform = IsLocallyControlled()
-		? Mesh1P->GetSocketTransform(GripSocketName)
-		: Mesh3P->GetSocketTransform(GripSocketName);
-
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = this;
-
-	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, spawnParameters));
+	Super::EndPlay(EndPlayReason);
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->AttachTo(this);
+		CurrentWeapon->Destroy();
+	}
+}
+
+void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType)
+{
+	UE_LOG(LogTemp, Warning, TEXT("FIRE"));
+	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
+	check(GameState);
+
+	// TODO Split perform action depends on player
+	if (!bActionCooldown && GameState->PerformAction(EActionType::FIRE))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ACTION"));
+		Auth_SpawnBullet(BulletType, BulletSpawnLocation);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("COOLDOWN"));
+		bActionCooldown = true;
+		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, 3.0f, false);
+	}
+}
+
+void AHitter::OnRep_bDead()
+{
+	if (bDead)
+	{
+		Mesh1P->SetSimulatePhysics(true);
+		Mesh3P->SetSimulatePhysics(true);
 	}
 }
 
 void AHitter::Fire()
 {
-	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
-	check(GameState);
-
-	if (CurrentWeapon && GameState->PerformAction(EActionType::FIRE))
+	if (!CurrentWeapon)
 	{
-		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
-
-		Server_SpawnBullet(CurrentWeapon->GetBulletType(), SpawnLocation);
+		UE_LOG(LogTemp, Warning, TEXT("NO WEAPON"));
+		return;
 	}
+
+	FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
+	TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
+	Server_Fire(SpawnLocation, BulletType);
 }
 
 void AHitter::Auth_Hit(UPlayer* Hitter, float Value)
@@ -109,25 +135,26 @@ void AHitter::Auth_Hit(UPlayer* Hitter, float Value)
 		check(GameState);
 		GameState->Auth_OnKilled(Hitter, GetNetOwningPlayer());
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Hit %f, Current Health %f"), Value, Health);
 }
 
-void AHitter::OnRep_Health()
+bool AHitter::IsDead() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Hitted. Current Health %f"), Health);
+	return bDead;
 }
 
-void AHitter::OnRep_bDead()
+TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
 {
-	if (bDead)
-	{
-		Mesh1P->SetSimulatePhysics(true);
-		Mesh3P->SetSimulatePhysics(true);
-	}
+	return IsLocallyControlled() ? Mesh1P : Mesh3P;
 }
 
-void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
+void AHitter::Auth_OnActionCooldownFinished()
+{
+	check(HasAuthority());
+
+	bActionCooldown = false;
+}
+
+void AHitter::Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
 {
 	check(HasAuthority());
 
@@ -138,21 +165,19 @@ void AHitter::Server_SpawnBullet_Implementation(TSubclassOf<ABullet> BulletType,
 	GetWorld()->SpawnActor(BulletType, &SpawnLocation, spawnParameters);
 }
 
-TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
+void AHitter::SpawnWeapon()
 {
-	return IsLocallyControlled() ? Mesh1P : Mesh3P;
-}
+	FTransform SpawnTransform = IsLocallyControlled()
+		? Mesh1P->GetSocketTransform(GripSocketName)
+		: Mesh3P->GetSocketTransform(GripSocketName);
 
-bool AHitter::IsDead() const
-{
-	return bDead;
-}
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
 
-void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, spawnParameters));
 	if (CurrentWeapon)
 	{
-		CurrentWeapon->Destroy();
+		CurrentWeapon->AttachTo(this);
 	}
 }

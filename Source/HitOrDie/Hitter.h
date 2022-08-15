@@ -19,12 +19,9 @@ class HITORDIE_API AHitter : public ACharacter
 
 public:
 	UFUNCTION(Server, Reliable)
-	void Server_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
+	void Server_Fire(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType);
 
 private:
-	UFUNCTION()
-	void OnRep_Health();
-
 	UFUNCTION()
 	void OnRep_bDead();
 
@@ -47,11 +44,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	float MaxHealth;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Health, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
 	float Health;
 	
-	UPROPERTY(ReplicatedUsing=OnRep_bDead, VisibleAnywhere, BlueprintReadOnly, Category = Stats)
+	UPROPERTY(ReplicatedUsing=OnRep_bDead, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
 	bool bDead;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
+	bool bActionCooldown;
 
 public:
 	AHitter();
@@ -66,16 +66,23 @@ public:
 
 	void Auth_Hit(UPlayer* Hitter, float Value);
 
-	TObjectPtr<USkeletalMeshComponent> GetMesh() const;
-
 	bool IsDead() const;
+
+	TObjectPtr<USkeletalMeshComponent> GetMesh() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
+	void Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
+
+	void Auth_OnActionCooldownFinished();
+
 	void SpawnWeapon();
 
 public:
 	static const FName GripSocketName;
+
+private:
+	FTimerHandle ActionCooldownTimer;
 };
