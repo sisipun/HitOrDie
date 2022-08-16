@@ -77,12 +77,12 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType)
 {
-	UE_LOG(LogTemp, Warning, TEXT("FIRE"));
 	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
 	check(GameState);
 
+	FString HitterName = GetNetOwningPlayer()->PlayerController->PlayerState->GetPlayerName();
 	// TODO Split perform action depends on player
-	if (!bActionCooldown && GameState->PerformAction(EActionType::FIRE))
+	if (!bActionCooldown && GameState->Auth_PerformAction(GetNetOwningPlayer(), EActionType::FIRE))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ACTION"));
 		Auth_SpawnBullet(BulletType, BulletSpawnLocation);

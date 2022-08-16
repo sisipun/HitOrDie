@@ -9,6 +9,8 @@
 
 class UAudioComponent;
 class USoundBase;
+class UPlayer;
+class AHitterController;
 
 UENUM(BlueprintType)
 enum class EActionType : uint8
@@ -52,6 +54,10 @@ class HITORDIE_API ASoundEmitter : public AActor
 {
 	GENERATED_BODY()
 	
+private:
+	UFUNCTION()
+	void Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Audio)
 	TObjectPtr<UAudioComponent> Audio;
@@ -62,21 +68,26 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Audio)
 	FName CurrentSound;
 
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Audio)
+	float PlaybackValue;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Timing)
+	TArray<FTiming> ActionTimings;
+
 public:	
 	ASoundEmitter();
 
-	bool PerformAction(EActionType Action);
-	TArray<FTiming> GetPossibleActions(float PeriodBefore, float PeriodAfter) const;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	bool Auth_PerformAction(UPlayer* Hitter, EActionType Action);
+	
+	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
+	
 	float GetPlaybackValue() const;
 
 protected:
 	virtual void BeginPlay() override; 
 
 private:
-	UFUNCTION() 
-	void OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
-
-private:
-	float PlaybackValue;
-	TDoubleLinkedList<FTiming> ActionTimings;
+	TMap<FString, int> HitterActionIndices;
 };

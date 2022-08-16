@@ -8,6 +8,8 @@
 
 #include "HitOrDieGameStateBase.generated.h"
 
+class AHitterController;
+
 UCLASS()
 class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 {
@@ -15,10 +17,10 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool PerformAction(EActionType Action);
+	bool Auth_PerformAction(UPlayer* Hitter, EActionType Action);
 
 	UFUNCTION(BlueprintPure)
-	TArray<FTiming> GetPossibleActions(float PeriodBefore, float PeriodAfter) const;
+	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
 
 	UFUNCTION(BlueprintPure)
 	float GetPlaybackValue() const;
