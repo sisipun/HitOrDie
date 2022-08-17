@@ -7,10 +7,10 @@
 
 #include "SoundEmitter.generated.h"
 
-class UAudioComponent;
-class USoundBase;
-class UPlayer;
 class AHitterController;
+class UAudioComponent;
+class UPlayer;
+class USoundBase;
 
 UENUM(BlueprintType)
 enum class EActionType : uint8
@@ -26,13 +26,13 @@ struct FTiming
 	GENERATED_BODY();
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float StartSecond;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float EndSecond;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Timing)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EActionType Action;
 };
 
@@ -49,6 +49,19 @@ public:
 	TArray<FTiming> ActionTimings;
 };
 
+USTRUCT(BlueprintType)
+struct FHitterActionIndex 
+{
+	GENERATED_BODY();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FString Name;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int Index;
+};
+
 UCLASS()
 class HITORDIE_API ASoundEmitter : public AActor
 {
@@ -57,6 +70,9 @@ class HITORDIE_API ASoundEmitter : public AActor
 private:
 	UFUNCTION()
 	void Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
+
+	UFUNCTION()
+	void OnRep_HitterActionIndices();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = Audio)
@@ -74,14 +90,17 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = Timing)
 	TArray<FTiming> ActionTimings;
 
+	UPROPERTY(ReplicatedUsing = OnRep_HitterActionIndices, BlueprintReadOnly, Category = Timing)
+	TArray<FHitterActionIndex> HitterActionIndices;
+
 public:	
 	ASoundEmitter();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	bool Auth_PerformAction(UPlayer* Hitter, EActionType Action);
+	bool Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action);
 	
-	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
+	TArray<FTiming> GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const;
 	
 	float GetPlaybackValue() const;
 
@@ -89,5 +108,8 @@ protected:
 	virtual void BeginPlay() override; 
 
 private:
-	TMap<FString, int> HitterActionIndices;
+	void SyncActionIndex(FString Name, int Index);
+
+private:
+	TMap<FString, int> HitterToActionIndex;
 };

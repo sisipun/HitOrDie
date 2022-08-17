@@ -15,7 +15,7 @@ void AHitOrDieGameStateBase::BeginPlay()
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
 }
 
-bool AHitOrDieGameStateBase::Auth_PerformAction(UPlayer* Hitter, EActionType Action)
+bool AHitOrDieGameStateBase::Auth_PerformAction(AHitterController* Hitter, EActionType Action)
 {
 	check(HasAuthority());
 	check(SoundEmitter);
@@ -37,11 +37,11 @@ float AHitOrDieGameStateBase::GetPlaybackValue() const
 	return SoundEmitter->GetPlaybackValue();
 }
 
-void AHitOrDieGameStateBase::Auth_OnKilled(UPlayer* Hitter, UPlayer* Hitted)
+void AHitOrDieGameStateBase::Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted)
 {
 	check(HasAuthority());
 
-	FString HitterName = Hitter->PlayerController->PlayerState->GetPlayerName();
+	FString HitterName = Hitter->PlayerState->GetPlayerName();
 	if (PlayersScore.Contains(HitterName))
 	{
 		PlayersScore.Add(HitterName, PlayersScore[HitterName] + 1);

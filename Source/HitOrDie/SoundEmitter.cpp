@@ -48,6 +48,7 @@ void ASoundEmitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(ASoundEmitter, ActionTimings);
 	DOREPLIFETIME(ASoundEmitter, PlaybackValue);
+	DOREPLIFETIME(ASoundEmitter, HitterActionIndices);
 }
 
 void ASoundEmitter::Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
@@ -57,25 +58,42 @@ void ASoundEmitter::Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWa
 	PlaybackValue = Audio->Sound->Duration * PlaybackPercent;
 }
 
-bool ASoundEmitter::Auth_PerformAction(UPlayer* Hitter, EActionType Action)
+void ASoundEmitter::OnRep_HitterActionIndices()
+{
+	for (const FHitterActionIndex& HitterActionIndex : HitterActionIndices)
+	{
+		if (HitterToActionIndex.Contains(HitterActionIndex.Name))
+		{
+			HitterToActionIndex[HitterActionIndex.Name] = HitterActionIndex.Index;
+		}
+		else
+		{
+			HitterToActionIndex.Add(HitterActionIndex.Name, HitterActionIndex.Index);
+		}
+	}
+}
+
+bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action)
 {
 	check(HasAuthority());
 
-	FString HitterName = Hitter->PlayerController->PlayerState->GetPlayerName();
-	if (!HitterActionIndices.Contains(HitterName))
+	FString HitterName = Hitter->PlayerState->GetPlayerName();
+	if (!HitterToActionIndex.Contains(HitterName))
 	{
-		HitterActionIndices.Add(HitterName, 0);
+		HitterToActionIndex.Add(HitterName, 0);
 	}
 
-	int& HitterActionIndex = HitterActionIndices[HitterName];
+	int& HitterActionIndex = HitterToActionIndex[HitterName];
 	while (ActionTimings.Num() < HitterActionIndex && ActionTimings[HitterActionIndex].EndSecond < PlaybackValue)
 	{
 		HitterActionIndex++;
+		SyncActionIndex(HitterName, HitterActionIndex);
 	}
 
-	if (ActionTimings.Num() >= HitterActionIndex && ActionTimings[HitterActionIndex].StartSecond < PlaybackValue && PlaybackValue < ActionTimings[HitterActionIndex].EndSecond)
+	if (ActionTimings.Num() > HitterActionIndex && ActionTimings[HitterActionIndex].StartSecond < PlaybackValue && PlaybackValue < ActionTimings[HitterActionIndex].EndSecond)
 	{
 		HitterActionIndex++;
+		SyncActionIndex(HitterName, HitterActionIndex);
 		return true;
 	}
 	else
@@ -84,11 +102,11 @@ bool ASoundEmitter::Auth_PerformAction(UPlayer* Hitter, EActionType Action)
 	}
 }
 
-TArray<FTiming> ASoundEmitter::GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const
+TArray<FTiming> ASoundEmitter::GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const
 {
 	FString HitterName = Hitter->PlayerState->GetPlayerName();
-	int HitterActionIndex = HitterActionIndices.Contains(HitterName) ? HitterActionIndices[HitterName] : 0;
-	
+	int HitterActionIndex = HitterToActionIndex.Contains(HitterName) ? HitterToActionIndex[HitterName] : 0;
+
 	TArray<FTiming> Actions;
 	for (int i = HitterActionIndex; i < ActionTimings.Num(); i++)
 	{
@@ -102,12 +120,24 @@ TArray<FTiming> ASoundEmitter::GetPossibleActions(AHitterController* Hitter, flo
 			Actions.Add(Timing);
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("PV %f"), PlaybackValue);
-	UE_LOG(LogTemp, Warning, TEXT("ACTIONS %d"), Actions.Num());
 	return Actions;
 }
 
 float ASoundEmitter::GetPlaybackValue() const
 {
 	return PlaybackValue;
+}
+
+void ASoundEmitter::SyncActionIndex(FString Name, int Index)
+{
+	for (FHitterActionIndex& HitterActionIndex : HitterActionIndices)
+	{
+		if (HitterActionIndex.Name == Name)
+		{
+			HitterActionIndex.Index = Index;
+			break;
+		}
+	}
+
+	HitterActionIndices.Add({ Name, Index });
 }

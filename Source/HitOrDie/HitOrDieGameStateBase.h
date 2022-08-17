@@ -17,7 +17,7 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 
 public:
 	UFUNCTION(BlueprintCallable)
-	bool Auth_PerformAction(UPlayer* Hitter, EActionType Action);
+	bool Auth_PerformAction(AHitterController* Hitter, EActionType Action);
 
 	UFUNCTION(BlueprintPure)
 	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
@@ -32,7 +32,7 @@ private:
 public:
 	AHitOrDieGameStateBase();
 
-	void Auth_OnKilled(UPlayer* Hitter, UPlayer* Hitted);
+	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
 
 protected:
 	virtual void BeginPlay() override;

@@ -80,9 +80,9 @@ void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubcla
 	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
 	check(GameState);
 
-	FString HitterName = GetNetOwningPlayer()->PlayerController->PlayerState->GetPlayerName();
 	// TODO Split perform action depends on player
-	if (!bActionCooldown && GameState->Auth_PerformAction(GetNetOwningPlayer(), EActionType::FIRE))
+	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
+	if (!bActionCooldown && GameState->Auth_PerformAction(HitterController, EActionType::FIRE))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ACTION"));
 		Auth_SpawnBullet(BulletType, BulletSpawnLocation);
@@ -117,7 +117,7 @@ void AHitter::Fire()
 	Server_Fire(SpawnLocation, BulletType);
 }
 
-void AHitter::Auth_Hit(UPlayer* Hitter, float Value)
+void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
 {
 	check(HasAuthority());
 

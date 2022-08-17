@@ -6,11 +6,12 @@
 
 #include "Hitter.generated.h"
 
+class ABullet;
+class AHitterController;
+class ASoundEmitter;
+class AWeapon;
 class UCameraComponent;
 class USkeletalMeshComponent;
-class AWeapon;
-class ABullet;
-class ASoundEmitter;
 
 UCLASS()
 class HITORDIE_API AHitter : public ACharacter
@@ -64,7 +65,7 @@ public:
 
 	void Fire();
 
-	void Auth_Hit(UPlayer* Hitter, float Value);
+	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);
 
 	bool IsDead() const;
 

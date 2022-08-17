@@ -5,6 +5,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 
 #include "Hitter.h"
+#include "HitterController.h"
 #include "Weapon.h"
 
 ABullet::ABullet()
@@ -53,7 +54,8 @@ void ABullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrim
 
 		if (Hitter && Hitted && Hitter->GetNetOwningPlayer() != Hitted->GetNetOwningPlayer())
 		{
-			Hitted->Auth_Hit(Hitter->GetNetOwningPlayer(), 10.0f);
+			TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(Hitter->GetNetOwningPlayer()->PlayerController);
+			Hitted->Auth_Hit(HitterController, 10.0f);
 			Destroy();
 		}
 	}

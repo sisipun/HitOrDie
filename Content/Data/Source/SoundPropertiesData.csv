@@ -1,2 +1,2 @@
----,Sound,ActionTimings,ActionLenght
-Default,"SoundWave'/Game/Audio/WeaponMusic.WeaponMusic'","((StartSecond=1.000000,Action=FIRE),(StartSecond=3.000000,Action=FIRE),(StartSecond=5.000000,Action=FIRE))","1.000000"
+---,Sound,ActionTimings
+Default,"SoundWave'/Game/Audio/WeaponMusic.WeaponMusic'","((StartSecond=1.000000,EndSecond=10.000000,Action=FIRE),(StartSecond=11.000000,EndSecond=12.000000,Action=FIRE),(StartSecond=13.000000,EndSecond=14.000000,Action=FIRE))"

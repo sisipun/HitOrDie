@@ -6,10 +6,10 @@
 
 #include "Weapon.generated.h"
 
-class USphereComponent;
-class USkeletalMeshComponent;
 class ABullet;
 class AHitter;
+class USkeletalMeshComponent;
+class USphereComponent;
 
 UCLASS()
 class HITORDIE_API AWeapon : public AActor
