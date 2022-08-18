@@ -80,16 +80,13 @@ void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubcla
 	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
 	check(GameState);
 
-	// TODO Split perform action depends on player
 	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
 	if (!bActionCooldown && GameState->Auth_PerformAction(HitterController, EActionType::FIRE))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("ACTION"));
 		Auth_SpawnBullet(BulletType, BulletSpawnLocation);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("COOLDOWN"));
 		bActionCooldown = true;
 		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, 3.0f, false);
 	}

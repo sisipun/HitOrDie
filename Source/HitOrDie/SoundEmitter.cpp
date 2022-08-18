@@ -14,6 +14,7 @@ ASoundEmitter::ASoundEmitter()
 	bReplicates = true;
 
 	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
+	Audio->SetIsReplicated(true);
 	Audio->bAutoActivate = false;
 }
 
@@ -28,17 +29,15 @@ void ASoundEmitter::BeginPlay()
 		if (HasAuthority())
 		{
 			ActionTimings = SoundProperties->ActionTimings;
-			ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey)
-				{
-					return FirstKey.StartSecond < SecondKey.StartSecond;
-				}
-			);
+			ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) { return FirstKey.StartSecond < SecondKey.StartSecond; });
 
 			Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::Auth_OnAudioPlaybackPercent);
+
+			FTimerHandle CountdownTimer;
+			GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdownFinished, 3.0f, false);
 		}
 
 		Audio->Sound = SoundProperties->Sound;
-		Audio->Play();
 	}
 }
 
@@ -49,6 +48,18 @@ void ASoundEmitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(ASoundEmitter, ActionTimings);
 	DOREPLIFETIME(ASoundEmitter, PlaybackValue);
 	DOREPLIFETIME(ASoundEmitter, HitterActionIndices);
+}
+
+void ASoundEmitter::Multicast_StartSound_Implementation()
+{
+	Audio->Play();
+}
+
+void ASoundEmitter::Auth_OnCountdownFinished()
+{
+	check(HasAuthority());
+
+	Multicast_StartSound();
 }
 
 void ASoundEmitter::Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)

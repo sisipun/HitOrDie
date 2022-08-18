@@ -68,6 +68,12 @@ class HITORDIE_API ASoundEmitter : public AActor
 	GENERATED_BODY()
 	
 private:
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_StartSound();
+
+	UFUNCTION()
+	void Auth_OnCountdownFinished();
+
 	UFUNCTION()
 	void Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
 
@@ -75,7 +81,7 @@ private:
 	void OnRep_HitterActionIndices();
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = Audio)
+	UPROPERTY(Replicated, VisibleAnywhere, Category = Audio)
 	TObjectPtr<UAudioComponent> Audio;
 
 	UPROPERTY(EditAnywhere, Category = Audio)
