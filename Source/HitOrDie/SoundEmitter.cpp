@@ -14,14 +14,36 @@ ASoundEmitter::ASoundEmitter()
 	bReplicates = true;
 
 	Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Audio"));
-	Audio->SetIsReplicated(true);
 	Audio->bAutoActivate = false;
+
+	CountdownLength = 3;
+	CountdownCurrentValue = CountdownLength;
+}
+
+void ASoundEmitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASoundEmitter, ActionTimings);
+	DOREPLIFETIME(ASoundEmitter, PlaybackValue);
+	DOREPLIFETIME(ASoundEmitter, HitterActionIndices);
+	DOREPLIFETIME(ASoundEmitter, CountdownCurrentValue);
+}
+
+void ASoundEmitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(ASoundEmitter, CountdownLength))
+	{
+		CountdownCurrentValue = CountdownLength;
+	}
 }
 
 void ASoundEmitter::BeginPlay()
 {
 	Super::BeginPlay();
 	PlaybackValue = 0.0f;
+	CountdownCurrentValue = CountdownLength;
 
 	TObjectPtr<FSoundProperties> SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
 	if (SoundProperties)
@@ -33,21 +55,11 @@ void ASoundEmitter::BeginPlay()
 
 			Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::Auth_OnAudioPlaybackPercent);
 
-			FTimerHandle CountdownTimer;
-			GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdownFinished, 3.0f, false);
+			GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdown, 1.0f, true, 1.0f);
 		}
 
 		Audio->Sound = SoundProperties->Sound;
 	}
-}
-
-void ASoundEmitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASoundEmitter, ActionTimings);
-	DOREPLIFETIME(ASoundEmitter, PlaybackValue);
-	DOREPLIFETIME(ASoundEmitter, HitterActionIndices);
 }
 
 void ASoundEmitter::Multicast_StartSound_Implementation()
@@ -55,11 +67,16 @@ void ASoundEmitter::Multicast_StartSound_Implementation()
 	Audio->Play();
 }
 
-void ASoundEmitter::Auth_OnCountdownFinished()
+void ASoundEmitter::Auth_OnCountdown()
 {
 	check(HasAuthority());
 
-	Multicast_StartSound();
+	CountdownCurrentValue--;
+	if (CountdownCurrentValue <= 0)
+	{
+		GetWorldTimerManager().ClearTimer(CountdownTimer);
+		Multicast_StartSound();
+	}
 }
 
 void ASoundEmitter::Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent)
@@ -137,6 +154,11 @@ TArray<FTiming> ASoundEmitter::GetPossibleActions(TObjectPtr<AHitterController> 
 float ASoundEmitter::GetPlaybackValue() const
 {
 	return PlaybackValue;
+}
+
+int ASoundEmitter::GetCountdownValue() const
+{
+	return CountdownCurrentValue;
 }
 
 void ASoundEmitter::SyncActionIndex(FString Name, int Index)

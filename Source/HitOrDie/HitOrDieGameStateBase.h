@@ -25,6 +25,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetPlaybackValue() const;
 
+	UFUNCTION(BlueprintPure)
+	int GetCountdownValue() const;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<ASoundEmitter> SoundEmitter;

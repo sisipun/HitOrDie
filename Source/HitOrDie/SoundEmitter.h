@@ -72,7 +72,7 @@ private:
 	void Multicast_StartSound();
 
 	UFUNCTION()
-	void Auth_OnCountdownFinished();
+	void Auth_OnCountdown();
 
 	UFUNCTION()
 	void Auth_OnAudioPlaybackPercent(const USoundWave* PlayingSoundWave, const float PlaybackPercent);
@@ -81,7 +81,7 @@ private:
 	void OnRep_HitterActionIndices();
 
 protected:
-	UPROPERTY(Replicated, VisibleAnywhere, Category = Audio)
+	UPROPERTY(VisibleAnywhere, Category = Audio)
 	TObjectPtr<UAudioComponent> Audio;
 
 	UPROPERTY(EditAnywhere, Category = Audio)
@@ -99,16 +99,26 @@ protected:
 	UPROPERTY(ReplicatedUsing = OnRep_HitterActionIndices, BlueprintReadOnly, Category = Timing)
 	TArray<FHitterActionIndex> HitterActionIndices;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Countdown)
+	int CountdownLength;
+
+	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Countdown)
+	int CountdownCurrentValue;
+
 public:	
 	ASoundEmitter();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	bool Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action);
 	
 	TArray<FTiming> GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const;
 	
 	float GetPlaybackValue() const;
+
+	int GetCountdownValue() const;
 
 protected:
 	virtual void BeginPlay() override; 
@@ -117,5 +127,6 @@ private:
 	void SyncActionIndex(FString Name, int Index);
 
 private:
+	FTimerHandle CountdownTimer;
 	TMap<FString, int> HitterToActionIndex;
 };

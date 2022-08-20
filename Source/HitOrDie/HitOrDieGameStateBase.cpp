@@ -37,6 +37,13 @@ float AHitOrDieGameStateBase::GetPlaybackValue() const
 	return SoundEmitter->GetPlaybackValue();
 }
 
+int AHitOrDieGameStateBase::GetCountdownValue() const
+{
+	check(SoundEmitter);
+
+	return SoundEmitter->GetCountdownValue();
+}
+
 void AHitOrDieGameStateBase::Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted)
 {
 	check(HasAuthority());
