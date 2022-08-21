@@ -12,6 +12,8 @@ AHitOrDieGameStateBase::AHitOrDieGameStateBase()
 
 void AHitOrDieGameStateBase::BeginPlay()
 {
+	Super::BeginPlay();
+
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
 }
 
