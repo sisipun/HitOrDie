@@ -13,4 +13,6 @@ class HITORDIE_API AHitOrDieGameModeBase : public AGameModeBase
 	
 public:
 	AHitOrDieGameModeBase();
+
+	virtual void PostLogin(APlayerController* NewPlayer) override;
 };
