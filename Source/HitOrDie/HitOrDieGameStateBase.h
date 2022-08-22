@@ -9,6 +9,7 @@
 #include "HitOrDieGameStateBase.generated.h"
 
 class AHitterController;
+class ASoundEmitter;
 
 UCLASS()
 class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase

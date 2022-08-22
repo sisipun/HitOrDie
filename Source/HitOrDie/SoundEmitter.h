@@ -112,6 +112,8 @@ public:
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
+	void Auth_Play();
+
 	bool Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action);
 	
 	TArray<FTiming> GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const;

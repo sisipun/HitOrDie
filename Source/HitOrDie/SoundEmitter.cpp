@@ -54,8 +54,6 @@ void ASoundEmitter::BeginPlay()
 			ActionTimings.Sort([](const FTiming& FirstKey, const FTiming& SecondKey) { return FirstKey.StartSecond < SecondKey.StartSecond; });
 
 			Audio->OnAudioPlaybackPercent.AddDynamic(this, &ASoundEmitter::Auth_OnAudioPlaybackPercent);
-
-			GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdown, 1.0f, true, 1.0f);
 		}
 
 		Audio->Sound = SoundProperties->Sound;
@@ -99,6 +97,11 @@ void ASoundEmitter::OnRep_HitterActionIndices()
 			HitterToActionIndex.Add(HitterActionIndex.Name, HitterActionIndex.Index);
 		}
 	}
+}
+
+void ASoundEmitter::Auth_Play()
+{
+	GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdown, 1.0f, true);
 }
 
 bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action)
