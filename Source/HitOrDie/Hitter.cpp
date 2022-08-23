@@ -8,7 +8,7 @@
 
 #include "Weapon.h"
 #include "Bullet.h"
-#include "HitOrDieGameStateBase.h"
+#include "HitOrDieGameModeBase.h"
 #include "SoundEmitter.h"
 #include "HitterController.h"
 
@@ -77,11 +77,11 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType)
 {
-	AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
-	check(GameState);
+	AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
+	check(GameMode);
 
 	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
-	if (!bActionCooldown && GameState->Auth_PerformAction(HitterController, EActionType::FIRE))
+	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, EActionType::FIRE))
 	{
 		Auth_SpawnBullet(BulletType, BulletSpawnLocation);
 	}
@@ -128,9 +128,9 @@ void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
 		FTimerHandle DeadTimer;
 		GetWorldTimerManager().SetTimer(DeadTimer, Cast<AHitterController>(GetController()), &AHitterController::Auth_OnDead, 3.0f, false);
 
-		AHitOrDieGameStateBase* GameState = Cast<AHitOrDieGameStateBase>(GetWorld()->GetGameState());
-		check(GameState);
-		GameState->Auth_OnKilled(Hitter, GetNetOwningPlayer());
+		AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
+		check(GameMode);
+		GameMode->Auth_OnKilled(Hitter, GetNetOwningPlayer());
 	}
 }
 

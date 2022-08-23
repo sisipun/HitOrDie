@@ -4,9 +4,12 @@
 
 #include "GameFramework/GameModeBase.h"
 
+#include "SoundEmitter.h"
+
 #include "HitOrDieGameModeBase.generated.h"
 
 class ASoundEmitter;
+class AHitterController;
 
 UCLASS()
 class HITORDIE_API AHitOrDieGameModeBase : public AGameModeBase
@@ -26,6 +29,13 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
+	bool Auth_PerformAction(AHitterController* Hitter, EActionType Action);
+
+	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
+
 protected:
 	virtual void BeginPlay() override;
+
+private:
+	TMap<FString, int32> PlayersScore;
 };

@@ -115,7 +115,7 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EAc
 	}
 
 	int& HitterActionIndex = HitterToActionIndex[HitterName];
-	while (ActionTimings.Num() < HitterActionIndex && ActionTimings[HitterActionIndex].EndSecond < PlaybackValue)
+	while (ActionTimings.Num() > HitterActionIndex && ActionTimings[HitterActionIndex].EndSecond < PlaybackValue)
 	{
 		HitterActionIndex++;
 		SyncActionIndex(HitterName, HitterActionIndex);
