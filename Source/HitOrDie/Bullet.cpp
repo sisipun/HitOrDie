@@ -55,7 +55,7 @@ void ABullet::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrim
 		if (Hitter && Hitted && Hitter->GetNetOwningPlayer() != Hitted->GetNetOwningPlayer())
 		{
 			TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(Hitter->GetNetOwningPlayer()->PlayerController);
-			Hitted->Auth_Hit(HitterController, 10.0f);
+			Hitted->Auth_Hit(HitterController, Power);
 			Destroy();
 		}
 	}
