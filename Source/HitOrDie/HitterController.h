@@ -13,14 +13,16 @@ class HITORDIE_API AHitterController : public APlayerController
 {
 	GENERATED_BODY()
 
+private:
+	UFUNCTION()
+	void Auth_OnDead();
+
 public:
 	AHitterController();
 
 	virtual void SetupInputComponent() override;
 
 	virtual void OnPossess(APawn* PossessedPawn) override;
-
-	void Auth_OnDead();
 
 private:
 	void Jump();

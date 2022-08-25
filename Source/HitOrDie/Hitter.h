@@ -13,6 +13,8 @@ class AWeapon;
 class UCameraComponent;
 class USkeletalMeshComponent;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FDeadSignature);
+
 UCLASS()
 class HITORDIE_API AHitter : public ACharacter
 {
@@ -25,6 +27,10 @@ public:
 private:
 	UFUNCTION()
 	void OnRep_bDead();
+
+public:
+	UPROPERTY(BlueprintAssignable)
+	FDeadSignature OnDead;
 
 protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = Weapon)
@@ -78,6 +84,8 @@ private:
 	void Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
 
 	void Auth_OnActionCooldownFinished();
+
+	void Auth_OnDead();
 
 	void SpawnWeapon();
 

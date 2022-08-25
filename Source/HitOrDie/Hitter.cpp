@@ -126,7 +126,7 @@ void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
 		OnRep_bDead();
 
 		FTimerHandle DeadTimer;
-		GetWorldTimerManager().SetTimer(DeadTimer, Cast<AHitterController>(GetController()), &AHitterController::Auth_OnDead, 3.0f, false);
+		GetWorldTimerManager().SetTimer(DeadTimer, this, &AHitter::Auth_OnDead, 3.0f, false);
 
 		AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
 		check(GameMode);
@@ -149,6 +149,13 @@ void AHitter::Auth_OnActionCooldownFinished()
 	check(HasAuthority());
 
 	bActionCooldown = false;
+}
+
+void AHitter::Auth_OnDead()
+{
+	check(HasAuthority());
+
+	OnDead.Broadcast();
 }
 
 void AHitter::Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)

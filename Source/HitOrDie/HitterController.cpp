@@ -1,4 +1,5 @@
 #include "HitterController.h"
+#include "HitterController.h"
 
 #include "GameFramework/Character.h"
 #include "GameFramework/GameModeBase.h"
@@ -29,6 +30,11 @@ void AHitterController::SetupInputComponent()
 void AHitterController::OnPossess(APawn* PossessedPawn)
 {
 	Super::OnPossess(PossessedPawn);
+	AHitter* Hitter = Cast<AHitter>(PossessedPawn);
+	if (Hitter)
+	{
+		Hitter->OnDead.AddDynamic(this, &AHitterController::Auth_OnDead);
+	}
 }
 
 void AHitterController::Auth_OnDead()
