@@ -20,14 +20,14 @@ class HITORDIE_API AHitter : public ACharacter
 
 public:
 	UFUNCTION(Server, Reliable)
-	void Server_Fire(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType);
+	void Server_Fire();
 
 private:
 	UFUNCTION()
 	void OnRep_bDead();
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = Weapon)
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Weapon)
 	AWeapon* CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, Category = Weapon)

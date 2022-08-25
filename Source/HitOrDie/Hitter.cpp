@@ -75,15 +75,23 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-void AHitter::Server_Fire_Implementation(FTransform BulletSpawnLocation, TSubclassOf<ABullet> BulletType)
+void AHitter::Server_Fire_Implementation()
 {
+	if (!CurrentWeapon)
+	{
+		return;
+	}
+
+	FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
+	TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
+
 	AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
 	check(GameMode);
 
 	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
 	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, EActionType::FIRE))
 	{
-		Auth_SpawnBullet(BulletType, BulletSpawnLocation);
+		Auth_SpawnBullet(BulletType, SpawnLocation);
 	}
 	else
 	{
@@ -103,15 +111,7 @@ void AHitter::OnRep_bDead()
 
 void AHitter::Fire()
 {
-	if (!CurrentWeapon)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NO WEAPON"));
-		return;
-	}
-
-	FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
-	TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
-	Server_Fire(SpawnLocation, BulletType);
+	Server_Fire();
 }
 
 void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
@@ -141,7 +141,7 @@ bool AHitter::IsDead() const
 
 TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
 {
-	return IsLocallyControlled() ? Mesh1P : Mesh3P;
+	return HasAuthority() || IsLocallyControlled() ? Mesh1P : Mesh3P;
 }
 
 void AHitter::Auth_OnActionCooldownFinished()
@@ -164,9 +164,7 @@ void AHitter::Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform Spawn
 
 void AHitter::SpawnWeapon()
 {
-	FTransform SpawnTransform = IsLocallyControlled()
-		? Mesh1P->GetSocketTransform(GripSocketName)
-		: Mesh3P->GetSocketTransform(GripSocketName);
+	FTransform SpawnTransform = GetMesh()->GetSocketTransform(GripSocketName);
 
 	FActorSpawnParameters spawnParameters;
 	spawnParameters.Instigator = GetInstigator();
