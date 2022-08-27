@@ -27,14 +27,13 @@ private:
 public:
 	AHitOrDieGameModeBase();
 
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
 	bool Auth_PerformAction(AHitterController* Hitter, EActionType Action);
 
 	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
-
-protected:
-	virtual void BeginPlay() override;
 
 private:
 	TMap<FString, int32> PlayersScore;

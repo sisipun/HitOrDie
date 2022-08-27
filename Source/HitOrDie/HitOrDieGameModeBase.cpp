@@ -11,9 +11,9 @@ AHitOrDieGameModeBase::AHitOrDieGameModeBase()
 	PrimaryActorTick.bCanEverTick = false;
 }
 
-void AHitOrDieGameModeBase::BeginPlay()
+void AHitOrDieGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
-	Super::BeginPlay();
+	Super::InitGame(MapName, Options, ErrorMessage);
 
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
 }

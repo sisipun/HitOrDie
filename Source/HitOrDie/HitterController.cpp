@@ -48,44 +48,44 @@ void AHitterController::Auth_OnDead()
 void AHitterController::Jump()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && !Hitter->IsDead())
+	if (Hitter)
 	{
 		Hitter->Jump();
-	}
-}
-
-void AHitterController::Fire()
-{
-	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && !Hitter->IsDead())
-	{
-		Hitter->Fire();
 	}
 }
 
 void AHitterController::StopJumping()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && !Hitter->IsDead())
+	if (Hitter)
 	{
 		Hitter->StopJumping();
+	}
+}
+
+void AHitterController::Fire()
+{
+	AHitter* Hitter = Cast<AHitter>(GetPawn());
+	if (Hitter)
+	{
+		Hitter->Fire();
 	}
 }
 
 void AHitterController::MoveX(float Scale)
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && !Hitter->IsDead() && Scale != 0)
+	if (Hitter)
 	{
-		Hitter->AddMovementInput(Hitter->GetActorRightVector(), Scale);
+		Hitter->MoveX(Scale);
 	}
 }
 
 void AHitterController::MoveY(float Scale)
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter && !Hitter->IsDead() && Scale != 0)
+	if (Hitter)
 	{
-		Hitter->AddMovementInput(Hitter->GetActorForwardVector(), Scale);
+		Hitter->MoveY(Scale);
 	}
 }

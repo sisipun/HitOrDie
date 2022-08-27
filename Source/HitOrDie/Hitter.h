@@ -69,6 +69,14 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	virtual void Jump() override;
+
+	virtual void StopJumping() override;
+
+	void MoveX(float Scale);
+
+	void MoveY(float Scale);
+
 	void Fire();
 
 	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);

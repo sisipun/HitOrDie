@@ -77,7 +77,7 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_Fire_Implementation()
 {
-	if (!CurrentWeapon)
+	if (!CurrentWeapon || IsDead())
 	{
 		return;
 	}
@@ -102,10 +102,42 @@ void AHitter::Server_Fire_Implementation()
 
 void AHitter::OnRep_bDead()
 {
-	if (bDead)
+	if (IsDead())
 	{
 		Mesh1P->SetSimulatePhysics(true);
 		Mesh3P->SetSimulatePhysics(true);
+	}
+}
+
+void AHitter::Jump()
+{
+	if (!IsDead())
+	{
+		Super::Jump();
+	}
+}
+
+void AHitter::StopJumping()
+{
+	if (!IsDead())
+	{
+		Super::StopJumping();
+	}
+}
+
+void AHitter::MoveX(float Scale)
+{
+	if (!IsDead() && Scale != 0)
+	{
+		AddMovementInput(GetActorRightVector(), Scale);
+	}
+}
+
+void AHitter::MoveY(float Scale)
+{
+	if (!IsDead() && Scale != 0)
+	{
+		AddMovementInput(GetActorForwardVector(), Scale);
 	}
 }
 
@@ -117,6 +149,10 @@ void AHitter::Fire()
 void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
 {
 	check(HasAuthority());
+	if (IsDead())
+	{
+		return;
+	}
 
 	Health -= Value;
 	if (Health <= 0.0f)
