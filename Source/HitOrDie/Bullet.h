@@ -15,7 +15,7 @@ class HITORDIE_API ABullet : public AActor
 {
 	GENERATED_BODY()
 
-private:
+protected:
 	UFUNCTION()
 	void Auth_OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
