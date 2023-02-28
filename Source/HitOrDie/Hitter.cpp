@@ -21,6 +21,10 @@ AHitter::AHitter()
 	bReplicates = true;
 	SetReplicateMovement(true);
 
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationPitch = false;
+	bUseControllerRotationRoll = false;
+
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetCapsuleComponent());
