@@ -40,7 +40,6 @@ void AExplosiveBullet::Auth_OnMiss(UPrimitiveComponent* HitComponent, AActor* Ot
 void AExplosiveBullet::Auth_Explode()
 {
 	check(HasAuthority());
-	UE_LOG(LogTemp, Warning, TEXT("Explode"));
 
 	AHitter* Hitter = Cast<AHitter>(GetOwner());
 	TSet<AActor*> OverlappingActors;

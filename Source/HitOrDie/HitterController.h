@@ -34,4 +34,8 @@ private:
 	void MoveX(float Scale);
 	
 	void MoveY(float Scale);
+
+	void LookX(float Scale);
+
+	void LookY(float Scale);
 };

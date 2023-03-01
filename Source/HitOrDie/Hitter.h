@@ -24,6 +24,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_Fire();
 
+	UFUNCTION(Server, Reliable)
+	void Server_SyncCameraRotation();
+
 private:
 	UFUNCTION()
 	void OnRep_bDead();

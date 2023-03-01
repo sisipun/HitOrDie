@@ -23,8 +23,8 @@ void AHitterController::SetupInputComponent()
 	InputComponent->BindAxis(TEXT("MoveX"), this, &AHitterController::MoveX);
 	InputComponent->BindAxis(TEXT("MoveY"), this, &AHitterController::MoveY);
 
-	InputComponent->BindAxis(TEXT("LookX"), this, &AHitterController::AddYawInput);
-	InputComponent->BindAxis(TEXT("LookY"), this, &AHitterController::AddPitchInput);
+	InputComponent->BindAxis(TEXT("LookX"), this, &AHitterController::LookX);
+	InputComponent->BindAxis(TEXT("LookY"), this, &AHitterController::LookY);
 }
 
 void AHitterController::OnPossess(APawn* PossessedPawn)
@@ -74,18 +74,50 @@ void AHitterController::Fire()
 
 void AHitterController::MoveX(float Scale)
 {
-	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter)
+	if (Scale != 0.0)
 	{
-		Hitter->MoveX(Scale);
+		AHitter* Hitter = Cast<AHitter>(GetPawn());
+		if (Hitter)
+		{
+			Hitter->MoveX(Scale);
+		}
 	}
 }
 
 void AHitterController::MoveY(float Scale)
 {
-	AHitter* Hitter = Cast<AHitter>(GetPawn());
-	if (Hitter)
+	if (Scale != 0.0)
 	{
-		Hitter->MoveY(Scale);
+		AHitter* Hitter = Cast<AHitter>(GetPawn());
+		if (Hitter)
+		{
+			Hitter->MoveY(Scale);
+		}
+	}
+}
+
+void AHitterController::LookX(float Scale)
+{
+	if (Scale != 0.0) 
+	{
+		AddYawInput(Scale);
+		AHitter* Hitter = Cast<AHitter>(GetPawn());
+		if (Hitter)
+		{
+			Hitter->Server_SyncCameraRotation();
+		}
+	}
+}
+
+void AHitterController::LookY(float Scale)
+{
+	if (Scale != 0.0)
+	{
+		AddPitchInput(Scale);
+		AHitter* Hitter = Cast<AHitter>(GetPawn());
+		if (Hitter)
+		{
+			Hitter->Server_SyncCameraRotation();
+		}
 	}
 }
