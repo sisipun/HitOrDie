@@ -106,7 +106,6 @@ void AHitter::Server_Fire_Implementation()
 
 void AHitter::Server_SyncCameraRotation_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("SERVER"));
 	const FRotator PawnViewRotation = GetViewRotation();
 	if (!PawnViewRotation.Equals(Camera->GetComponentRotation()))
 	{
