@@ -23,8 +23,11 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh;
 
-	UPROPERTY(EditAnywhere, Category = Bullet)
+	UPROPERTY(EditAnywhere, Category = Ammunition)
 	TSubclassOf<ABullet> BulletType;
+
+	UPROPERTY(EditAnywhere, Category = Ammunition)
+	TSubclassOf<ABullet> GrenadeType;
 
 private:
 	UPROPERTY(Transient)
@@ -36,6 +39,8 @@ public:
 	void AttachTo(AHitter* AttachedHitter);
 
 	TSubclassOf<ABullet> GetBulletType() const;
+
+	TSubclassOf<ABullet> GetGrenadeType() const;
 
 	FTransform GetMuzzleTransform() const;
 

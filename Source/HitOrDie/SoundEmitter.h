@@ -17,6 +17,7 @@ enum class EActionType : uint8
 {
 	NONE UMETA(DisplayName = "None"),
 	FIRE UMETA(DisplayName = "Fire"),
+	GRENADE UMETA(DisplayName = "Grenade"),
 	RELOAD UMETA(DisplayName = "Reload")
 };
 

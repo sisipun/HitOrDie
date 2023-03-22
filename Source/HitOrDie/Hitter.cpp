@@ -9,7 +9,6 @@
 #include "Weapon.h"
 #include "Bullet.h"
 #include "HitOrDieGameModeBase.h"
-#include "SoundEmitter.h"
 #include "HitterController.h"
 
 const FName AHitter::GripSocketName = FName(TEXT("GripPoint"));
@@ -81,26 +80,21 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_Fire_Implementation()
 {
-	if (!CurrentWeapon || IsDead())
+	if (CurrentWeapon && Auth_TryAction(EActionType::FIRE))
 	{
-		return;
-	}
-
-	FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
-	TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
-
-	AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
-	check(GameMode);
-
-	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
-	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, EActionType::FIRE))
-	{
+		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
+		TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
 		Auth_SpawnBullet(BulletType, SpawnLocation);
 	}
-	else
+}
+
+void AHitter::Server_Grenade_Implementation()
+{
+	if (CurrentWeapon && Auth_TryAction(EActionType::GRENADE))
 	{
-		bActionCooldown = true;
-		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, 3.0f, false);
+		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
+		TSubclassOf<ABullet> BulletType = CurrentWeapon->GetGrenadeType();
+		Auth_SpawnBullet(BulletType, SpawnLocation);
 	}
 }
 
@@ -159,6 +153,11 @@ void AHitter::Fire()
 	Server_Fire();
 }
 
+void AHitter::Grenade()
+{
+	Server_Grenade();
+}
+
 void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
 {
 	check(HasAuthority());
@@ -191,6 +190,29 @@ bool AHitter::IsDead() const
 TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
 {
 	return HasAuthority() || IsLocallyControlled() ? Mesh1P : Mesh3P;
+}
+
+bool AHitter::Auth_TryAction(EActionType type)
+{
+	if (IsDead())
+	{
+		return false;
+	}
+
+	AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
+	check(GameMode);
+
+	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
+	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, EActionType::FIRE))
+	{
+		return true;
+	}
+	else
+	{
+		bActionCooldown = true;
+		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, 3.0f, false);
+		return false;
+	}
 }
 
 void AHitter::Auth_OnActionCooldownFinished()

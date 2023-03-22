@@ -28,6 +28,8 @@ private:
 	void Jump();
 
 	void Fire();
+	
+	void Grenade();
 
 	void StopJumping();
 

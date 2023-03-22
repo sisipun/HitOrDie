@@ -4,6 +4,8 @@
 
 #include "GameFramework/Character.h"
 
+#include "SoundEmitter.h"
+
 #include "Hitter.generated.h"
 
 class ABullet;
@@ -23,6 +25,9 @@ class HITORDIE_API AHitter : public ACharacter
 public:
 	UFUNCTION(Server, Reliable)
 	void Server_Fire();
+
+	UFUNCTION(Server, Reliable)
+	void Server_Grenade();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SyncCameraRotation();
@@ -82,6 +87,8 @@ public:
 
 	void Fire();
 
+	void Grenade();
+
 	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);
 
 	bool IsDead() const;
@@ -92,6 +99,8 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	bool Auth_TryAction(EActionType type);
+
 	void Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
 
 	void Auth_OnActionCooldownFinished();

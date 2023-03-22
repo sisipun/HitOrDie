@@ -46,6 +46,11 @@ TSubclassOf<ABullet> AWeapon::GetBulletType() const
 	return BulletType;
 }
 
+TSubclassOf<ABullet> AWeapon::GetGrenadeType() const
+{
+	return GrenadeType;
+}
+
 FTransform AWeapon::GetMuzzleTransform() const
 {
 	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
