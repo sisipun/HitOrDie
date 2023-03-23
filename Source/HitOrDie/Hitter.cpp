@@ -203,7 +203,7 @@ bool AHitter::Auth_TryAction(EActionType type)
 	check(GameMode);
 
 	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
-	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, EActionType::FIRE))
+	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, type))
 	{
 		return true;
 	}
