@@ -82,9 +82,7 @@ void AHitter::Server_Fire_Implementation()
 {
 	if (CurrentWeapon && Auth_TryAction(EActionType::FIRE))
 	{
-		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
-		TSubclassOf<ABullet> BulletType = CurrentWeapon->GetBulletType();
-		Auth_SpawnBullet(BulletType, SpawnLocation);
+		CurrentWeapon->Auth_Fire();
 	}
 }
 
@@ -92,9 +90,7 @@ void AHitter::Server_Grenade_Implementation()
 {
 	if (CurrentWeapon && Auth_TryAction(EActionType::GRENADE))
 	{
-		FTransform SpawnLocation = CurrentWeapon->GetMuzzleTransform();
-		TSubclassOf<ABullet> BulletType = CurrentWeapon->GetGrenadeType();
-		Auth_SpawnBullet(BulletType, SpawnLocation);
+		CurrentWeapon->Auth_Grenade();
 	}
 }
 
@@ -227,17 +223,6 @@ void AHitter::Auth_OnDead()
 	check(HasAuthority());
 
 	OnDead.Broadcast();
-}
-
-void AHitter::Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation)
-{
-	check(HasAuthority());
-
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = this;
-
-	GetWorld()->SpawnActor(BulletType, &SpawnLocation, spawnParameters);
 }
 
 void AHitter::SpawnWeapon()

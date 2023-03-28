@@ -60,7 +60,7 @@ public:
 	FString Name;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	int Index;
+	int32 Index;
 };
 
 UCLASS()
@@ -101,10 +101,10 @@ protected:
 	TArray<FHitterActionIndex> HitterActionIndices;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Countdown)
-	int CountdownLength;
+	int32 CountdownLength;
 
 	UPROPERTY(Replicated, VisibleAnywhere, BlueprintReadOnly, Category = Countdown)
-	int CountdownCurrentValue;
+	int32 CountdownCurrentValue;
 
 public:	
 	ASoundEmitter();
@@ -121,15 +121,15 @@ public:
 	
 	float GetPlaybackValue() const;
 
-	int GetCountdownValue() const;
+	int32 GetCountdownValue() const;
 
 protected:
 	virtual void BeginPlay() override; 
 
 private:
-	void SyncActionIndex(FString Name, int Index);
+	void SyncActionIndex(FString Name, int32 Index);
 
 private:
 	FTimerHandle CountdownTimer;
-	TMap<FString, int> HitterToActionIndex;
+	TMap<FString, int32> HitterToActionIndex;
 };

@@ -114,7 +114,7 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EAc
 		HitterToActionIndex.Add(HitterName, 0);
 	}
 
-	int& HitterActionIndex = HitterToActionIndex[HitterName];
+	int32& HitterActionIndex = HitterToActionIndex[HitterName];
 	while (ActionTimings.Num() > HitterActionIndex && ActionTimings[HitterActionIndex].EndSecond < PlaybackValue)
 	{
 		HitterActionIndex++;
@@ -137,10 +137,10 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EAc
 TArray<FTiming> ASoundEmitter::GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const
 {
 	FString HitterName = Hitter->PlayerState->GetPlayerName();
-	int HitterActionIndex = HitterToActionIndex.Contains(HitterName) ? HitterToActionIndex[HitterName] : 0;
+	int32 HitterActionIndex = HitterToActionIndex.Contains(HitterName) ? HitterToActionIndex[HitterName] : 0;
 
 	TArray<FTiming> Actions;
-	for (int i = HitterActionIndex; i < ActionTimings.Num(); i++)
+	for (int32 i = HitterActionIndex; i < ActionTimings.Num(); i++)
 	{
 		const FTiming& Timing = ActionTimings[i];
 		if (Timing.StartSecond - PeriodBefore > PlaybackValue)
@@ -160,12 +160,12 @@ float ASoundEmitter::GetPlaybackValue() const
 	return PlaybackValue;
 }
 
-int ASoundEmitter::GetCountdownValue() const
+int32 ASoundEmitter::GetCountdownValue() const
 {
 	return CountdownCurrentValue;
 }
 
-void ASoundEmitter::SyncActionIndex(FString Name, int Index)
+void ASoundEmitter::SyncActionIndex(FString Name, int32 Index)
 {
 	for (FHitterActionIndex& HitterActionIndex : HitterActionIndices)
 	{

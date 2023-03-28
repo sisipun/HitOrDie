@@ -26,6 +26,45 @@ AWeapon::AWeapon()
 	Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->CastShadow = false;
+
+	CurrentBulletCount = BulletCount;
+}
+
+void AWeapon::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+{
+	Super::PostEditChangeProperty(PropertyChangedEvent);
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AWeapon, BulletCount))
+	{
+		CurrentBulletCount = BulletCount;
+	}
+}
+
+void AWeapon::BeginPlay()
+{
+	Super::BeginPlay();
+	CurrentBulletCount = BulletCount;
+}
+
+void AWeapon::Auth_Fire()
+{
+	check(HasAuthority());
+
+	if (CurrentBulletCount > 0)
+	{
+		Auth_SpawnBullet(BulletType, GetMuzzleTransform());
+		CurrentBulletCount--;
+	}
+	else
+	{
+		CurrentBulletCount = BulletCount;
+	}
+}
+
+void AWeapon::Auth_Grenade()
+{
+	check(HasAuthority());
+
+	Auth_SpawnBullet(GrenadeType, GetMuzzleTransform());
 }
 
 void AWeapon::AttachTo(AHitter* AttachedHitter)
@@ -54,4 +93,15 @@ TSubclassOf<ABullet> AWeapon::GetGrenadeType() const
 FTransform AWeapon::GetMuzzleTransform() const
 {
 	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
+}
+
+void AWeapon::Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocation)
+{
+	check(HasAuthority());
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = GetOwner();
+
+	GetWorld()->SpawnActor(Type, &SpawnLocation, spawnParameters);
 }

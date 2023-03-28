@@ -29,6 +29,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Ammunition)
 	TSubclassOf<ABullet> GrenadeType;
 
+	UPROPERTY(EditAnywhere, Category = Ammunition)
+	int32 BulletCount;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<AHitter> Hitter;
@@ -36,7 +39,13 @@ private:
 public:	
 	AWeapon();
 
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+
 	void AttachTo(AHitter* AttachedHitter);
+
+	void Auth_Fire();
+	
+	void Auth_Grenade();
 
 	TSubclassOf<ABullet> GetBulletType() const;
 
@@ -44,6 +53,15 @@ public:
 
 	FTransform GetMuzzleTransform() const;
 
+protected:
+	virtual void BeginPlay() override;
+
+private:
+	void Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocation);
+
 public:
 	static const FName MuzzleSocketName;
+
+private:
+	int32 CurrentBulletCount;
 };

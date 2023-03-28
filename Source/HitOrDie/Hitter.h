@@ -101,8 +101,6 @@ protected:
 private:
 	bool Auth_TryAction(EActionType type);
 
-	void Auth_SpawnBullet(TSubclassOf<ABullet> BulletType, FTransform SpawnLocation);
-
 	void Auth_OnActionCooldownFinished();
 
 	void Auth_OnDead();

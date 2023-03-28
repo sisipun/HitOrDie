@@ -31,7 +31,7 @@ float AHitOrDieGameStateBase::GetPlaybackValue() const
 	return SoundEmitter->GetPlaybackValue();
 }
 
-int AHitOrDieGameStateBase::GetCountdownValue() const
+int32 AHitOrDieGameStateBase::GetCountdownValue() const
 {
 	check(SoundEmitter);
 

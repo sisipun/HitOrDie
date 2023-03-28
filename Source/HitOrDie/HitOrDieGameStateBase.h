@@ -23,7 +23,7 @@ public:
 	float GetPlaybackValue() const;
 
 	UFUNCTION(BlueprintPure)
-	int GetCountdownValue() const;
+	int32 GetCountdownValue() const;
 
 private:
 	UPROPERTY(Transient)
