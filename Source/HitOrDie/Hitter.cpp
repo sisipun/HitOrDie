@@ -206,7 +206,7 @@ bool AHitter::Auth_TryAction(EActionType type)
 	else
 	{
 		bActionCooldown = true;
-		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, 3.0f, false);
+		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, CooldownDuration, false);
 		return false;
 	}
 }
