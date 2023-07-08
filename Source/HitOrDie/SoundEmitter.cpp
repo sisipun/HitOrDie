@@ -122,7 +122,7 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EAc
 	}
 
 	FTiming& Timing = ActionTimings[HitterActionIndex];
-	if (ActionTimings.Num() > HitterActionIndex && Timing.StartSecond < PlaybackValue && PlaybackValue < Timing.EndSecond && Timing.Action == Action)
+	if (ActionTimings.Num() > HitterActionIndex && Timing.StartSecond < PlaybackValue && PlaybackValue < Timing.EndSecond)
 	{
 		HitterActionIndex++;
 		SyncActionIndex(HitterName, HitterActionIndex);
