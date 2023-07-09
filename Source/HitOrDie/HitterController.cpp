@@ -19,7 +19,7 @@ void AHitterController::SetupInputComponent()
 	InputComponent->BindAction(TEXT("Jump"), IE_Released, this, &AHitterController::StopJumping);
 
 	InputComponent->BindAction(TEXT("Fire"), IE_Pressed, this, &AHitterController::Fire);
-	InputComponent->BindAction(TEXT("Grenade"), IE_Pressed, this, &AHitterController::Grenade);
+	InputComponent->BindAction(TEXT("Ability"), IE_Pressed, this, &AHitterController::Ability);
 
 	InputComponent->BindAxis(TEXT("MoveX"), this, &AHitterController::MoveX);
 	InputComponent->BindAxis(TEXT("MoveY"), this, &AHitterController::MoveY);
@@ -73,12 +73,12 @@ void AHitterController::Fire()
 	}
 }
 
-void AHitterController::Grenade()
+void AHitterController::Ability()
 {
 	AHitter* Hitter = Cast<AHitter>(GetPawn());
 	if (Hitter)
 	{
-		Hitter->Grenade();
+		Hitter->Ability();
 	}
 }
 

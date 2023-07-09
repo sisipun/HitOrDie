@@ -86,10 +86,11 @@ void AHitter::Server_Fire_Implementation()
 	}
 }
 
-void AHitter::Server_Grenade_Implementation()
+void AHitter::Server_Ability_Implementation()
 {
-	if (CurrentWeapon && Auth_TryAction(EActionType::GRENADE))
+	if (CurrentWeapon && Auth_TryAction(AbilityType))
 	{
+		// TODO change to call ability method when will be more than one ability
 		CurrentWeapon->Auth_Grenade();
 	}
 }
@@ -149,9 +150,9 @@ void AHitter::Fire()
 	Server_Fire();
 }
 
-void AHitter::Grenade()
+void AHitter::Ability()
 {
-	Server_Grenade();
+	Server_Ability();
 }
 
 void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)

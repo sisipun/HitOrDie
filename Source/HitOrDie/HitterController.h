@@ -29,7 +29,7 @@ private:
 
 	void Fire();
 	
-	void Grenade();
+	void Ability();
 
 	void StopJumping();
 

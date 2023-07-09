@@ -27,7 +27,7 @@ public:
 	void Server_Fire();
 
 	UFUNCTION(Server, Reliable)
-	void Server_Grenade();
+	void Server_Ability();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SyncCameraRotation();
@@ -46,6 +46,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	TSubclassOf<AWeapon> WeaponType;
+	
+	UPROPERTY(EditAnywhere, Category = Ability)
+	EActionType AbilityType;
 
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
 	TObjectPtr<UCameraComponent> Camera;
@@ -90,7 +93,7 @@ public:
 
 	void Fire();
 
-	void Grenade();
+	void Ability();
 
 	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);
 
