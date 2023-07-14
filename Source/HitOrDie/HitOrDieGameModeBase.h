@@ -20,6 +20,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int MinPlayersCount;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	int MaxPlayersCount;
+
 private:
 	UPROPERTY(Transient)
 	TObjectPtr<ASoundEmitter> SoundEmitter;
@@ -28,6 +31,8 @@ public:
 	AHitOrDieGameModeBase();
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	virtual void PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage) override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 

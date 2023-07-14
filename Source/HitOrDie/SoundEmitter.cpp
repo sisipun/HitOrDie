@@ -136,10 +136,15 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EAc
 
 TArray<FTiming> ASoundEmitter::GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const
 {
+	TArray<FTiming> Actions;
+	if (!Hitter->PlayerState)
+	{
+		return Actions;
+	}
+
 	FString HitterName = Hitter->PlayerState->GetPlayerName();
 	int32 HitterActionIndex = HitterToActionIndex.Contains(HitterName) ? HitterToActionIndex[HitterName] : 0;
 
-	TArray<FTiming> Actions;
 	for (int32 i = HitterActionIndex; i < ActionTimings.Num(); i++)
 	{
 		const FTiming& Timing = ActionTimings[i];

@@ -18,6 +18,16 @@ void AHitOrDieGameModeBase::InitGame(const FString& MapName, const FString& Opti
 	SoundEmitter = *TActorIterator<ASoundEmitter>(GetWorld());
 }
 
+void AHitOrDieGameModeBase::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	UE_LOG(LogTemp, Warning, TEXT("%d - %d"), GameState->PlayerArray.Num(), MaxPlayersCount)
+	if (GameState->PlayerArray.Num() >= MaxPlayersCount)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Too many players"))
+		ErrorMessage = TEXT("Too many players");
+	}
+}
+
 void AHitOrDieGameModeBase::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
