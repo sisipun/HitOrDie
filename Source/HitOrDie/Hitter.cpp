@@ -204,10 +204,14 @@ bool AHitter::Auth_TryAction(EActionType type)
 	{
 		return true;
 	}
-	else
+	else if (!bActionCooldown)
 	{
 		bActionCooldown = true;
 		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, CooldownDuration, false);
+		return false;
+	}
+	else
+	{
 		return false;
 	}
 }
