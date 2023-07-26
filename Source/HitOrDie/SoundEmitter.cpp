@@ -45,7 +45,7 @@ void ASoundEmitter::BeginPlay()
 	PlaybackValue = 0.0f;
 	CountdownCurrentValue = CountdownLength;
 
-	TObjectPtr<FSoundProperties> SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
+	FSoundProperties* SoundProperties = SoundPropertiesDataTable->FindRow<FSoundProperties>(CurrentSound, TEXT("Searching for sound properties"));
 	if (SoundProperties)
 	{
 		if (HasAuthority())
