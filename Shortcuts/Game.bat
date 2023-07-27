@@ -1,1 +1,1 @@
-"D:\Programms\Epic Games\UE_5.1\Engine\Binaries\Win64\UnrealEditor.exe" "D:\Projects\HitOrDie\HitOrDie.uproject" -game
+"E:\Epic Games\UE_5.2\Engine\Binaries\Win64\UnrealEditor.exe" "E:\Projects\HitOrDie\HitOrDie.uproject" -game
