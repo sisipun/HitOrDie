@@ -17,11 +17,14 @@ class HITORDIE_API AHitOrDieGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Rules)
 	int MinPlayersCount;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Rules)
 	int MaxPlayersCount;
+
+	UPROPERTY(EditDefaultsOnly, Category = Rules)
+	float CooldownDuration;
 
 private:
 	UPROPERTY(Transient)
@@ -39,6 +42,8 @@ public:
 	bool Auth_PerformAction(AHitterController* Hitter, EActionType Action);
 
 	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
+
+	float GetCooldownDuration() const;
 
 private:
 	TMap<FString, int32> PlayersScore;

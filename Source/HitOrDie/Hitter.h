@@ -71,9 +71,6 @@ protected:
 	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
 	bool bActionCooldown;
 
-	UPROPERTY(EditDefaultsOnly, Category = Stats)
-	float CooldownDuration;
-
 public:
 	AHitter();
 

@@ -82,7 +82,7 @@ void AHitter::Server_Fire_Implementation()
 {
 	if (CurrentWeapon && Auth_TryAction(EActionType::FIRE))
 	{
-		CurrentWeapon->Auth_Fire();
+		CurrentWeapon->Auth_Fire(Camera->GetComponentLocation(), Camera->GetForwardVector());
 	}
 }
 
@@ -207,7 +207,7 @@ bool AHitter::Auth_TryAction(EActionType type)
 	else if (!bActionCooldown)
 	{
 		bActionCooldown = true;
-		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, CooldownDuration, false);
+		GetWorldTimerManager().SetTimer(ActionCooldownTimer, this, &AHitter::Auth_OnActionCooldownFinished, GameMode->GetCooldownDuration(), false);
 		return false;
 	}
 	else

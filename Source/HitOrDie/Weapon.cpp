@@ -3,8 +3,9 @@
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 
-#include "Hitter.h"
 #include "Bullet.h"
+#include "Hitter.h"
+#include "HitterController.h"
 
 const FName AWeapon::MuzzleSocketName = FName(TEXT("Muzzle"));
 
@@ -45,13 +46,13 @@ void AWeapon::BeginPlay()
 	CurrentBulletCount = BulletCount;
 }
 
-void AWeapon::Auth_Fire()
+void AWeapon::Auth_Fire(const FVector& From, const FVector& Direction)
 {
 	check(HasAuthority());
 
 	if (CurrentBulletCount > 0)
 	{
-		Auth_SpawnBullet(BulletType, GetMuzzleTransform());
+		Auth_FireLineTrace(From, Direction);
 		CurrentBulletCount--;
 	}
 	else
@@ -104,4 +105,33 @@ void AWeapon::Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocati
 	spawnParameters.Owner = GetOwner();
 
 	GetWorld()->SpawnActor(Type, &SpawnLocation, spawnParameters);
+}
+
+void AWeapon::Auth_FireLineTrace(const FVector& From, const FVector& Direction)
+{
+	FVector Start = From;
+	FVector End = From + (Direction * 10000);
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(Hitter);
+
+	FHitResult Result;
+
+	bool WasHitted = GetWorld()->LineTraceSingleByChannel(Result, Start, End, ECC_Pawn, CollisionParams, FCollisionResponseParams());
+	UE_LOG(LogTemp, Warning, TEXT("Tried"));
+	if (WasHitted)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hitted"));
+	}
+	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0.1f, 10.0f);
+	if (!WasHitted || !Result.GetActor())
+	{
+		return;
+	}
+
+	AHitter* Hitted = Cast<AHitter>(Result.GetActor());
+	if (Hitter && Hitted && Hitter->GetNetOwningPlayer() != Hitted->GetNetOwningPlayer())
+	{
+		TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(Hitter->GetNetOwningPlayer()->PlayerController);
+		Hitted->Auth_Hit(HitterController, Power);
+	}
 }

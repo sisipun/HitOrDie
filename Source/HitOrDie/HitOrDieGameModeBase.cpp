@@ -63,3 +63,8 @@ void AHitOrDieGameModeBase::Auth_OnKilled(TObjectPtr<AHitterController> Hitter, 
 
 	UE_LOG(LogTemp, Warning, TEXT("Score %s - %d"), *HitterName, PlayersScore[HitterName]);
 }
+
+float AHitOrDieGameModeBase::GetCooldownDuration() const
+{
+	return CooldownDuration;
+}

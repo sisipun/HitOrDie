@@ -23,6 +23,9 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USkeletalMeshComponent> Mesh;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)
+	float Power;
+
 	UPROPERTY(EditAnywhere, Category = Ammunition)
 	TSubclassOf<ABullet> BulletType;
 
@@ -31,6 +34,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = Ammunition)
 	int32 BulletCount;
+
 
 private:
 	UPROPERTY(Transient)
@@ -43,7 +47,7 @@ public:
 
 	void AttachTo(AHitter* AttachedHitter);
 
-	void Auth_Fire();
+	void Auth_Fire(const FVector& From, const FVector& Direction);
 	
 	void Auth_Grenade();
 
@@ -58,6 +62,8 @@ protected:
 
 private:
 	void Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocation);
+
+	void Auth_FireLineTrace(const FVector& From, const FVector& Direction);
 
 public:
 	static const FName MuzzleSocketName;
