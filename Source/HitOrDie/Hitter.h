@@ -41,15 +41,6 @@ public:
 	FDeadSignature OnDead;
 
 protected:
-	UPROPERTY(Replicated, BlueprintReadOnly, Category = Weapon)
-	AWeapon* CurrentWeapon;
-
-	UPROPERTY(EditAnywhere, Category = Weapon)
-	TSubclassOf<AWeapon> WeaponType;
-	
-	UPROPERTY(EditAnywhere, Category = Ability)
-	EActionType AbilityType;
-
 	UPROPERTY(VisibleDefaultsOnly, Category = Camera)
 	TObjectPtr<UCameraComponent> Camera;
 
@@ -70,6 +61,21 @@ protected:
 
 	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
 	bool bActionCooldown;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
+	bool bAbilityReloading;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Weapon)
+	AWeapon* CurrentWeapon;
+
+	UPROPERTY(EditAnywhere, Category = Weapon)
+	TSubclassOf<AWeapon> WeaponType;
+
+	UPROPERTY(EditAnywhere, Category = Ability)
+	EActionType AbilityType;
+
+	UPROPERTY(EditDefaultsOnly, Category = Ability)
+	float AbilityReloadDuration;
 
 public:
 	AHitter();
@@ -106,6 +112,8 @@ private:
 
 	void Auth_OnActionCooldownFinished();
 
+	void Auth_OnAbilityReloadFinished();
+
 	void Auth_OnDead();
 
 	void SpawnWeapon();
@@ -115,4 +123,5 @@ public:
 
 private:
 	FTimerHandle ActionCooldownTimer;
+	FTimerHandle AbilityReloadTimer;
 };

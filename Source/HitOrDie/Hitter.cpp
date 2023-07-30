@@ -48,6 +48,7 @@ void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(AHitter, Health);
 	DOREPLIFETIME(AHitter, bDead);
 	DOREPLIFETIME(AHitter, bActionCooldown);
+	DOREPLIFETIME(AHitter, bAbilityReloading);
 }
 
 void AHitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -66,6 +67,7 @@ void AHitter::BeginPlay()
 	Health = MaxHealth;
 	bDead = false;
 	bActionCooldown = false;
+	bAbilityReloading = false;
 	SpawnWeapon();
 }
 
@@ -88,10 +90,12 @@ void AHitter::Server_Fire_Implementation()
 
 void AHitter::Server_Ability_Implementation()
 {
-	if (CurrentWeapon && Auth_TryAction(AbilityType))
+	if (!bAbilityReloading && CurrentWeapon && Auth_TryAction(AbilityType))
 	{
 		// TODO change to call ability method when will be more than one ability
 		CurrentWeapon->Auth_Grenade();
+		bAbilityReloading = true;
+		GetWorldTimerManager().SetTimer(AbilityReloadTimer, this, &AHitter::Auth_OnAbilityReloadFinished, AbilityReloadDuration, false);
 	}
 }
 
@@ -221,6 +225,13 @@ void AHitter::Auth_OnActionCooldownFinished()
 	check(HasAuthority());
 
 	bActionCooldown = false;
+}
+
+void AHitter::Auth_OnAbilityReloadFinished()
+{
+	check(HasAuthority());
+
+	bAbilityReloading = false;
 }
 
 void AHitter::Auth_OnDead()
