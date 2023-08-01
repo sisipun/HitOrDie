@@ -16,6 +16,10 @@ class HITORDIE_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void Auth_Grenade();
+
 protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<USphereComponent> Collider;
@@ -35,8 +39,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Ammunition)
 	int32 BulletCount;
 
-
-private:
 	UPROPERTY(Transient)
 	TObjectPtr<AHitter> Hitter;
 
@@ -49,8 +51,6 @@ public:
 
 	void Auth_Fire(const FVector& From, const FVector& Direction);
 	
-	void Auth_Grenade();
-
 	TSubclassOf<ABullet> GetBulletType() const;
 
 	TSubclassOf<ABullet> GetGrenadeType() const;

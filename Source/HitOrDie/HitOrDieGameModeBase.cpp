@@ -39,12 +39,12 @@ void AHitOrDieGameModeBase::PostLogin(APlayerController* NewPlayer)
 	}
 }
 
-bool AHitOrDieGameModeBase::Auth_PerformAction(AHitterController* Hitter, EActionType Action)
+bool AHitOrDieGameModeBase::Auth_PerformAction(AHitterController* Hitter)
 {
 	check(HasAuthority());
 	check(SoundEmitter);
 
-	return SoundEmitter->Auth_PerformAction(Hitter, Action);
+	return SoundEmitter->Auth_PerformAction(Hitter);
 }
 
 void AHitOrDieGameModeBase::Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted)

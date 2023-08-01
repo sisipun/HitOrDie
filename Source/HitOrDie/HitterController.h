@@ -29,7 +29,7 @@ private:
 
 	void Fire();
 	
-	void Ability();
+	void UseAbility();
 
 	void StopJumping();
 

@@ -39,7 +39,7 @@ public:
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	bool Auth_PerformAction(AHitterController* Hitter, EActionType Action);
+	bool Auth_PerformAction(AHitterController* Hitter);
 
 	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
 

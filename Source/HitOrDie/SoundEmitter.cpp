@@ -104,7 +104,7 @@ void ASoundEmitter::Auth_Play()
 	GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdown, 1.0f, true);
 }
 
-bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter, EActionType Action)
+bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter)
 {
 	check(HasAuthority());
 

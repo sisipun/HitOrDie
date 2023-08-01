@@ -8,9 +8,8 @@
 
 #include "Hitter.generated.h"
 
-class ABullet;
+class AAbility;
 class AHitterController;
-class ASoundEmitter;
 class AWeapon;
 class UCameraComponent;
 class USkeletalMeshComponent;
@@ -27,7 +26,7 @@ public:
 	void Server_Fire();
 
 	UFUNCTION(Server, Reliable)
-	void Server_Ability();
+	void Server_UseAbility();
 
 	UFUNCTION(Server, Reliable)
 	void Server_SyncCameraRotation();
@@ -53,17 +52,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stats)
 	float MaxHealth;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Stats)
 	float Health;
 	
-	UPROPERTY(ReplicatedUsing=OnRep_bDead, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
+	UPROPERTY(ReplicatedUsing=OnRep_bDead, BlueprintReadOnly, Category = Stats)
 	bool bDead;
 
-	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Stats)
 	bool bActionCooldown;
-
-	UPROPERTY(Replicated, BlueprintReadOnly, VisibleAnywhere, Category = Stats)
-	bool bAbilityReloading;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = Weapon)
 	AWeapon* CurrentWeapon;
@@ -71,11 +67,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = Weapon)
 	TSubclassOf<AWeapon> WeaponType;
 
-	UPROPERTY(EditAnywhere, Category = Ability)
-	EActionType AbilityType;
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Ability)
+	AAbility* Ability;
 
-	UPROPERTY(EditDefaultsOnly, Category = Ability)
-	float AbilityReloadDuration;
+	UPROPERTY(EditAnywhere, Category = Ability)
+	TSubclassOf<AAbility> AbilityType;
 
 public:
 	AHitter();
@@ -96,7 +92,7 @@ public:
 
 	void Fire();
 
-	void Ability();
+	void UseAbility();
 
 	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);
 
@@ -108,20 +104,19 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
-	bool Auth_TryAction(EActionType type);
+	bool Auth_TryAction();
 
 	void Auth_OnActionCooldownFinished();
-
-	void Auth_OnAbilityReloadFinished();
 
 	void Auth_OnDead();
 
 	void SpawnWeapon();
+
+	void SpawnAbility();
 
 public:
 	static const FName GripSocketName;
 
 private:
 	FTimerHandle ActionCooldownTimer;
-	FTimerHandle AbilityReloadTimer;
 };

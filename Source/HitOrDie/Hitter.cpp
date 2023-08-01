@@ -6,8 +6,8 @@
 #include "GameFramework/PlayerState.h"
 #include "Net/UnrealNetwork.h"
 
+#include "Ability.h"
 #include "Weapon.h"
-#include "Bullet.h"
 #include "HitOrDieGameModeBase.h"
 #include "HitterController.h"
 
@@ -48,7 +48,8 @@ void AHitter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 	DOREPLIFETIME(AHitter, Health);
 	DOREPLIFETIME(AHitter, bDead);
 	DOREPLIFETIME(AHitter, bActionCooldown);
-	DOREPLIFETIME(AHitter, bAbilityReloading);
+	DOREPLIFETIME(AHitter, CurrentWeapon);
+	DOREPLIFETIME(AHitter, Ability);
 }
 
 void AHitter::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
@@ -67,8 +68,8 @@ void AHitter::BeginPlay()
 	Health = MaxHealth;
 	bDead = false;
 	bActionCooldown = false;
-	bAbilityReloading = false;
 	SpawnWeapon();
+	SpawnAbility();
 }
 
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -82,20 +83,17 @@ void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void AHitter::Server_Fire_Implementation()
 {
-	if (CurrentWeapon && Auth_TryAction(EActionType::FIRE))
+	if (CurrentWeapon && Auth_TryAction())
 	{
 		CurrentWeapon->Auth_Fire(Camera->GetComponentLocation(), Camera->GetForwardVector());
 	}
 }
 
-void AHitter::Server_Ability_Implementation()
+void AHitter::Server_UseAbility_Implementation()
 {
-	if (!bAbilityReloading && CurrentWeapon && Auth_TryAction(AbilityType))
+	if (Ability && Ability->CanUse() && Auth_TryAction())
 	{
-		// TODO change to call ability method when will be more than one ability
-		CurrentWeapon->Auth_Grenade();
-		bAbilityReloading = true;
-		GetWorldTimerManager().SetTimer(AbilityReloadTimer, this, &AHitter::Auth_OnAbilityReloadFinished, AbilityReloadDuration, false);
+		Ability->Auth_TryUse();
 	}
 }
 
@@ -154,9 +152,9 @@ void AHitter::Fire()
 	Server_Fire();
 }
 
-void AHitter::Ability()
+void AHitter::UseAbility()
 {
-	Server_Ability();
+	Server_UseAbility();
 }
 
 void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
@@ -193,7 +191,7 @@ TObjectPtr<USkeletalMeshComponent> AHitter::GetMesh() const
 	return HasAuthority() || IsLocallyControlled() ? Mesh1P : Mesh3P;
 }
 
-bool AHitter::Auth_TryAction(EActionType type)
+bool AHitter::Auth_TryAction()
 {
 	if (IsDead())
 	{
@@ -204,7 +202,7 @@ bool AHitter::Auth_TryAction(EActionType type)
 	check(GameMode);
 
 	TObjectPtr<AHitterController> HitterController = Cast<AHitterController>(GetNetOwningPlayer()->PlayerController);
-	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController, type))
+	if (!bActionCooldown && GameMode->Auth_PerformAction(HitterController))
 	{
 		return true;
 	}
@@ -227,13 +225,6 @@ void AHitter::Auth_OnActionCooldownFinished()
 	bActionCooldown = false;
 }
 
-void AHitter::Auth_OnAbilityReloadFinished()
-{
-	check(HasAuthority());
-
-	bAbilityReloading = false;
-}
-
 void AHitter::Auth_OnDead()
 {
 	check(HasAuthority());
@@ -253,5 +244,20 @@ void AHitter::SpawnWeapon()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->AttachTo(this);
+	}
+}
+
+void AHitter::SpawnAbility()
+{
+	FTransform SpawnTransform;
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	Ability = Cast<AAbility>(GetWorld()->SpawnActor(AbilityType, &SpawnTransform, spawnParameters));
+	if (Ability)
+	{
+		Ability->AttachTo(this);
 	}
 }
