@@ -48,6 +48,6 @@ bool AAbility::CanUse() const
 void AAbility::Auth_OnAbilityReloadFinished()
 {
 	check(HasAuthority());
-
+	
 	bReloading = false;
 }

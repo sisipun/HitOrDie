@@ -37,6 +37,9 @@ protected:
 	TSubclassOf<ABullet> GrenadeType;
 
 	UPROPERTY(EditAnywhere, Category = Ammunition)
+	int32 MaxBulletCount;
+
+	UPROPERTY(Replicated, BlueprintReadOnly, Category = Ammunition)
 	int32 BulletCount;
 
 	UPROPERTY(Transient)
@@ -44,6 +47,8 @@ protected:
 
 public:	
 	AWeapon();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
@@ -67,7 +72,4 @@ private:
 
 public:
 	static const FName MuzzleSocketName;
-
-private:
-	int32 CurrentBulletCount;
 };

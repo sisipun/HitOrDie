@@ -68,8 +68,11 @@ void AHitter::BeginPlay()
 	Health = MaxHealth;
 	bDead = false;
 	bActionCooldown = false;
-	SpawnWeapon();
-	SpawnAbility();
+	if (HasAuthority())
+	{
+		SpawnWeapon();
+		SpawnAbility();
+	}
 }
 
 void AHitter::EndPlay(const EEndPlayReason::Type EndPlayReason)

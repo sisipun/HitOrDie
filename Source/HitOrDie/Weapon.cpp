@@ -2,6 +2,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "Net/UnrealNetwork.h"
 
 #include "Bullet.h"
 #include "Hitter.h"
@@ -13,7 +14,7 @@ AWeapon::AWeapon()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	bReplicates = false;
+	bReplicates = true;
 
 	Collider = CreateDefaultSubobject<USphereComponent>(TEXT("Collider"));
 	Collider->SetGenerateOverlapEvents(false);
@@ -28,36 +29,43 @@ AWeapon::AWeapon()
 	Mesh->SetupAttachment(RootComponent);
 	Mesh->CastShadow = false;
 
-	CurrentBulletCount = BulletCount;
+	BulletCount = MaxBulletCount;
+}
+
+void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AWeapon, BulletCount);
 }
 
 void AWeapon::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
-	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AWeapon, BulletCount))
+	if (PropertyChangedEvent.Property->GetFName() == GET_MEMBER_NAME_CHECKED(AWeapon, MaxBulletCount))
 	{
-		CurrentBulletCount = BulletCount;
+		BulletCount = MaxBulletCount;
 	}
 }
 
 void AWeapon::BeginPlay()
 {
 	Super::BeginPlay();
-	CurrentBulletCount = BulletCount;
+	BulletCount = MaxBulletCount;
 }
 
 void AWeapon::Auth_Fire(const FVector& From, const FVector& Direction)
 {
 	check(HasAuthority());
 
-	if (CurrentBulletCount > 0)
+	if (BulletCount > 0)
 	{
 		Auth_FireLineTrace(From, Direction);
-		CurrentBulletCount--;
+		BulletCount--;
 	}
 	else
 	{
-		CurrentBulletCount = BulletCount;
+		BulletCount = MaxBulletCount;
 	}
 }
 
@@ -117,11 +125,6 @@ void AWeapon::Auth_FireLineTrace(const FVector& From, const FVector& Direction)
 	FHitResult Result;
 
 	bool WasHitted = GetWorld()->LineTraceSingleByChannel(Result, Start, End, ECC_Pawn, CollisionParams, FCollisionResponseParams());
-	UE_LOG(LogTemp, Warning, TEXT("Tried"));
-	if (WasHitted)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Hitted"));
-	}
 	DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 2.0f, 0.1f, 10.0f);
 	if (!WasHitted || !Result.GetActor())
 	{
