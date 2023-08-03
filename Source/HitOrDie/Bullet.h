@@ -29,7 +29,7 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<UStaticMeshComponent> Mesh;
 
-	UPROPERTY(VisibleDefaultsOnly, Category = UProjectile)
+	UPROPERTY(VisibleDefaultsOnly, Category = Body)
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Stats)

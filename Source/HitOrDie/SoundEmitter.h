@@ -12,15 +12,6 @@ class UAudioComponent;
 class UPlayer;
 class USoundBase;
 
-UENUM(BlueprintType)
-enum class EActionType : uint8
-{
-	NONE UMETA(DisplayName = "None"),
-	FIRE UMETA(DisplayName = "Fire"),
-	GRENADE UMETA(DisplayName = "Grenade"),
-	RELOAD UMETA(DisplayName = "Reload")
-};
-
 USTRUCT(BlueprintType)
 struct FTiming
 {
@@ -32,9 +23,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float EndSecond;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	EActionType Action;
 };
 
 USTRUCT(BlueprintType)

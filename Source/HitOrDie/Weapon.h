@@ -18,7 +18,7 @@ class HITORDIE_API AWeapon : public AActor
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void Auth_Grenade();
+	FTransform GetMuzzleTransform() const;
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)
@@ -57,10 +57,6 @@ public:
 	void Auth_Fire(const FVector& From, const FVector& Direction);
 	
 	TSubclassOf<ABullet> GetBulletType() const;
-
-	TSubclassOf<ABullet> GetGrenadeType() const;
-
-	FTransform GetMuzzleTransform() const;
 
 protected:
 	virtual void BeginPlay() override;

@@ -69,13 +69,6 @@ void AWeapon::Auth_Fire(const FVector& From, const FVector& Direction)
 	}
 }
 
-void AWeapon::Auth_Grenade()
-{
-	check(HasAuthority());
-
-	Auth_SpawnBullet(GrenadeType, GetMuzzleTransform());
-}
-
 void AWeapon::AttachTo(AHitter* AttachedHitter)
 {
 	Hitter = AttachedHitter;
@@ -92,11 +85,6 @@ void AWeapon::AttachTo(AHitter* AttachedHitter)
 TSubclassOf<ABullet> AWeapon::GetBulletType() const
 {
 	return BulletType;
-}
-
-TSubclassOf<ABullet> AWeapon::GetGrenadeType() const
-{
-	return GrenadeType;
 }
 
 FTransform AWeapon::GetMuzzleTransform() const
