@@ -82,25 +82,9 @@ void AWeapon::AttachTo(AHitter* AttachedHitter)
 	}
 }
 
-TSubclassOf<ABullet> AWeapon::GetBulletType() const
-{
-	return BulletType;
-}
-
 FTransform AWeapon::GetMuzzleTransform() const
 {
 	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
-}
-
-void AWeapon::Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocation)
-{
-	check(HasAuthority());
-
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = GetOwner();
-
-	GetWorld()->SpawnActor(Type, &SpawnLocation, spawnParameters);
 }
 
 void AWeapon::Auth_FireLineTrace(const FVector& From, const FVector& Direction)

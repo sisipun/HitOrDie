@@ -31,12 +31,6 @@ protected:
 	float Power;
 
 	UPROPERTY(EditAnywhere, Category = Ammunition)
-	TSubclassOf<ABullet> BulletType;
-
-	UPROPERTY(EditAnywhere, Category = Ammunition)
-	TSubclassOf<ABullet> GrenadeType;
-
-	UPROPERTY(EditAnywhere, Category = Ammunition)
 	int32 MaxBulletCount;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = Ammunition)
@@ -55,15 +49,11 @@ public:
 	void AttachTo(AHitter* AttachedHitter);
 
 	void Auth_Fire(const FVector& From, const FVector& Direction);
-	
-	TSubclassOf<ABullet> GetBulletType() const;
 
 protected:
 	virtual void BeginPlay() override;
 
 private:
-	void Auth_SpawnBullet(TSubclassOf<ABullet> Type, FTransform SpawnLocation);
-
 	void Auth_FireLineTrace(const FVector& From, const FVector& Direction);
 
 public:
