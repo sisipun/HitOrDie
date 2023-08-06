@@ -16,7 +16,7 @@ class HITORDIE_API AWeapon : public AActor
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UFUNCTION(BlueprintCallable)
 	FTransform GetMuzzleTransform() const;
 

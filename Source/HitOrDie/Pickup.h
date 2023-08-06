@@ -13,11 +13,12 @@ class HITORDIE_API APickup : public AActor
 	GENERATED_BODY()
 	
 protected:
-	UFUNCTION()
-	virtual void Auth_OnOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
 	UFUNCTION(BlueprintImplementableEvent)
 	void Auth_PickedUp(AHitter* Hitter);
+
+private:
+	UFUNCTION()
+	void Auth_OnOverlap(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 protected:
 	UPROPERTY(VisibleDefaultsOnly, Category = Body)

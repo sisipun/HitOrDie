@@ -11,7 +11,7 @@ class HITORDIE_API AAbility : public AActor
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void Auth_Use();
 

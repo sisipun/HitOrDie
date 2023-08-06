@@ -16,7 +16,7 @@ class HITORDIE_API AHitOrDieGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Rules)
 	int MinPlayersCount;
 
@@ -41,7 +41,7 @@ public:
 
 	bool Auth_PerformAction(AHitterController* Hitter);
 
-	void Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted);
+	void Auth_OnKilled(AHitterController* Hitter, UPlayer* Hitted);
 
 	float GetCooldownDuration() const;
 

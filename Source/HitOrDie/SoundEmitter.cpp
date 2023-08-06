@@ -104,7 +104,7 @@ void ASoundEmitter::Auth_Play()
 	GetWorldTimerManager().SetTimer(CountdownTimer, this, &ASoundEmitter::Auth_OnCountdown, 1.0f, true);
 }
 
-bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter)
+bool ASoundEmitter::Auth_PerformAction(AHitterController* Hitter)
 {
 	check(HasAuthority());
 
@@ -134,7 +134,7 @@ bool ASoundEmitter::Auth_PerformAction(TObjectPtr<AHitterController> Hitter)
 	}
 }
 
-TArray<FTiming> ASoundEmitter::GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const
+TArray<FTiming> ASoundEmitter::GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const
 {
 	TArray<FTiming> Actions;
 	if (!Hitter->PlayerState)

@@ -103,9 +103,9 @@ public:
 
 	void Auth_Play();
 
-	bool Auth_PerformAction(TObjectPtr<AHitterController> Hitter);
+	bool Auth_PerformAction(AHitterController* Hitter);
 	
-	TArray<FTiming> GetPossibleActions(TObjectPtr<AHitterController> Hitter, float PeriodBefore, float PeriodAfter) const;
+	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
 	
 	float GetPlaybackValue() const;
 

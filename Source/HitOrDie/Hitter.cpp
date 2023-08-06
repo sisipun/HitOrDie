@@ -109,6 +109,39 @@ void AHitter::Server_SyncCameraRotation_Implementation()
 	}
 }
 
+void AHitter::Auth_Hit(AHitterController* Hitter, float Value)
+{
+	check(HasAuthority());
+	if (IsDead())
+	{
+		return;
+	}
+
+	Health -= Value;
+	if (Health <= 0.0f)
+	{
+		Health = 0.0f;
+		bDead = true;
+		OnRep_bDead();
+
+		FTimerHandle DeadTimer;
+		GetWorldTimerManager().SetTimer(DeadTimer, this, &AHitter::Auth_OnDead, 3.0f, false);
+
+		AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
+		check(GameMode);
+		GameMode->Auth_OnKilled(Hitter, GetNetOwningPlayer());
+	}
+}
+
+void AHitter::Auth_Heal(float Value)
+{
+	Health += Value;
+	if (Health > MaxHealth)
+	{
+		Health = MaxHealth;
+	}
+}
+
 void AHitter::OnRep_bDead()
 {
 	if (IsDead())
@@ -158,30 +191,6 @@ void AHitter::Fire()
 void AHitter::UseAbility()
 {
 	Server_UseAbility();
-}
-
-void AHitter::Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value)
-{
-	check(HasAuthority());
-	if (IsDead())
-	{
-		return;
-	}
-
-	Health -= Value;
-	if (Health <= 0.0f)
-	{
-		Health = 0.0f;
-		bDead = true;
-		OnRep_bDead();
-
-		FTimerHandle DeadTimer;
-		GetWorldTimerManager().SetTimer(DeadTimer, this, &AHitter::Auth_OnDead, 3.0f, false);
-
-		AHitOrDieGameModeBase* GameMode = GetWorld()->GetAuthGameMode<AHitOrDieGameModeBase>();
-		check(GameMode);
-		GameMode->Auth_OnKilled(Hitter, GetNetOwningPlayer());
-	}
 }
 
 bool AHitter::IsDead() const

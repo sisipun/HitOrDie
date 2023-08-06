@@ -15,7 +15,7 @@ class HITORDIE_API AHitOrDieGameStateBase : public AGameStateBase
 {
 	GENERATED_BODY()
 
-public:
+protected:
 	UFUNCTION(BlueprintPure)
 	TArray<FTiming> GetPossibleActions(AHitterController* Hitter, float PeriodBefore, float PeriodAfter) const;
 

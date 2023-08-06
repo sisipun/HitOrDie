@@ -47,7 +47,7 @@ bool AHitOrDieGameModeBase::Auth_PerformAction(AHitterController* Hitter)
 	return SoundEmitter->Auth_PerformAction(Hitter);
 }
 
-void AHitOrDieGameModeBase::Auth_OnKilled(TObjectPtr<AHitterController> Hitter, UPlayer* Hitted)
+void AHitOrDieGameModeBase::Auth_OnKilled(AHitterController* Hitter, UPlayer* Hitted)
 {
 	check(HasAuthority());
 

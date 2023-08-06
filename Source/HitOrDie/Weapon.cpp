@@ -54,6 +54,11 @@ void AWeapon::BeginPlay()
 	BulletCount = MaxBulletCount;
 }
 
+FTransform AWeapon::GetMuzzleTransform() const
+{
+	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
+}
+
 void AWeapon::Auth_Fire(const FVector& From, const FVector& Direction)
 {
 	check(HasAuthority());
@@ -80,11 +85,6 @@ void AWeapon::AttachTo(AHitter* AttachedHitter)
 			AHitter::GripSocketName
 		);
 	}
-}
-
-FTransform AWeapon::GetMuzzleTransform() const
-{
-	return Mesh->GetSocketTransform(AWeapon::MuzzleSocketName);
 }
 
 void AWeapon::Auth_FireLineTrace(const FVector& From, const FVector& Direction)

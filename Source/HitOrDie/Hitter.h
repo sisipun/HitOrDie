@@ -31,6 +31,12 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_SyncCameraRotation();
 
+	UFUNCTION(BlueprintCallable)
+	void Auth_Hit(AHitterController* Hitter, float Value);
+
+	UFUNCTION(BlueprintCallable)
+	void Auth_Heal(float Value);
+
 private:
 	UFUNCTION()
 	void OnRep_bDead();
@@ -93,8 +99,6 @@ public:
 	void Fire();
 
 	void UseAbility();
-
-	void Auth_Hit(TObjectPtr<AHitterController> Hitter, float Value);
 
 	bool IsDead() const;
 
