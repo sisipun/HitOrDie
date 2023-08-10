@@ -70,8 +70,8 @@ void AHitter::BeginPlay()
 	bActionCooldown = false;
 	if (HasAuthority())
 	{
-		SpawnWeapon();
-		SpawnAbility();
+		Auth_SpawnWeapon(WeaponType);
+		Auth_SpawnAbility();
 	}
 }
 
@@ -140,6 +140,38 @@ void AHitter::Auth_Heal(float Value)
 	{
 		Health = MaxHealth;
 	}
+}
+
+void AHitter::Auth_SpawnWeapon(TSubclassOf<AWeapon> Weapon)
+{
+	check(HasAuthority());
+
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->Destroy();
+	}
+
+	FTransform SpawnTransform = GetMesh()->GetSocketTransform(GripSocketName);
+
+	FActorSpawnParameters spawnParameters;
+	spawnParameters.Instigator = GetInstigator();
+	spawnParameters.Owner = this;
+
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(Weapon, &SpawnTransform, spawnParameters));
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->AttachTo(this);
+	}
+}
+
+bool AHitter::HasWeapon() const
+{
+	if (!CurrentWeapon) 
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void AHitter::OnRep_bDead()
@@ -244,23 +276,10 @@ void AHitter::Auth_OnDead()
 	OnDead.Broadcast();
 }
 
-void AHitter::SpawnWeapon()
+void AHitter::Auth_SpawnAbility()
 {
-	FTransform SpawnTransform = GetMesh()->GetSocketTransform(GripSocketName);
+	check(HasAuthority());
 
-	FActorSpawnParameters spawnParameters;
-	spawnParameters.Instigator = GetInstigator();
-	spawnParameters.Owner = this;
-
-	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, spawnParameters));
-	if (CurrentWeapon)
-	{
-		CurrentWeapon->AttachTo(this);
-	}
-}
-
-void AHitter::SpawnAbility()
-{
 	FTransform SpawnTransform;
 
 	FActorSpawnParameters spawnParameters;

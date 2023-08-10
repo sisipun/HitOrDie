@@ -37,6 +37,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Auth_Heal(float Value);
 
+protected:
+	UFUNCTION(BlueprintCallable)
+	void Auth_SpawnWeapon(TSubclassOf<AWeapon> Weapon);
+
+	UFUNCTION(BlueprintPure)
+	bool HasWeapon() const;
+
 private:
 	UFUNCTION()
 	void OnRep_bDead();
@@ -114,9 +121,7 @@ private:
 
 	void Auth_OnDead();
 
-	void SpawnWeapon();
-
-	void SpawnAbility();
+	void Auth_SpawnAbility();
 
 public:
 	static const FName GripSocketName;
