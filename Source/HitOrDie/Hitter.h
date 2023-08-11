@@ -41,9 +41,6 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void Auth_SpawnWeapon(TSubclassOf<AWeapon> Weapon);
 
-	UFUNCTION(BlueprintPure)
-	bool HasWeapon() const;
-
 private:
 	UFUNCTION()
 	void OnRep_bDead();
@@ -78,7 +75,7 @@ protected:
 	AWeapon* CurrentWeapon;
 
 	UPROPERTY(EditAnywhere, Category = Weapon)
-	TSubclassOf<AWeapon> WeaponType;
+	TSubclassOf<AWeapon> InitialWeaponType;
 
 	UPROPERTY(Replicated, BlueprintReadOnly, Category = Ability)
 	AAbility* Ability;

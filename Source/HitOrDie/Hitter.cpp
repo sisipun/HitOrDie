@@ -70,7 +70,7 @@ void AHitter::BeginPlay()
 	bActionCooldown = false;
 	if (HasAuthority())
 	{
-		Auth_SpawnWeapon(WeaponType);
+		Auth_SpawnWeapon(InitialWeaponType);
 		Auth_SpawnAbility();
 	}
 }
@@ -142,7 +142,7 @@ void AHitter::Auth_Heal(float Value)
 	}
 }
 
-void AHitter::Auth_SpawnWeapon(TSubclassOf<AWeapon> Weapon)
+void AHitter::Auth_SpawnWeapon(TSubclassOf<AWeapon> WeaponType)
 {
 	check(HasAuthority());
 
@@ -157,21 +157,11 @@ void AHitter::Auth_SpawnWeapon(TSubclassOf<AWeapon> Weapon)
 	spawnParameters.Instigator = GetInstigator();
 	spawnParameters.Owner = this;
 
-	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(Weapon, &SpawnTransform, spawnParameters));
+	CurrentWeapon = Cast<AWeapon>(GetWorld()->SpawnActor(WeaponType, &SpawnTransform, spawnParameters));
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->AttachTo(this);
 	}
-}
-
-bool AHitter::HasWeapon() const
-{
-	if (!CurrentWeapon) 
-	{
-		return false;
-	}
-
-	return true;
 }
 
 void AHitter::OnRep_bDead()
